@@ -19,9 +19,10 @@ count = (end - start) / step + 1
 
 data <- commandArgs(T)
 print(data)
-dir <- "/cbcb/project-scratch/fdorri/Code/methylFlow/testing/coverage/"
-
-
+#dir <- "/cbcb/project-scratch/fdorri/Code/methylFlow/testing/coverage/"
+dir <- "/Users/faezeh/Desktop/project/methylFlow_analyses/coverage/"
+#data[1]= 0
+#data[2] = 2
 ##### reading files ##################
 if (data[1] == "0"){
     if ( data[2] == "2"){
@@ -30,7 +31,8 @@ if (data[1] == "0"){
         
         mcfCoverage <- read.table(paste(dir,"hard-Auto/mcf.txt",sep=""), sep="\t", row.names=NULL, header = TRUE)
         
-        dir <- "/cbcb/project-scratch/fdorri/Code/methylFlow/testing/coverage/hard-Auto/"
+        #dir <- "/cbcb/project-scratch/fdorri/Code/methylFlow/testing/coverage/hard-Auto/"
+        dir <- "/Users/faezeh/Desktop/project/methylFlow_analyses/coverage/hard-Auto/"
         
     }
     
@@ -40,7 +42,8 @@ if (data[1] == "0"){
         
         mcfCoverage <- read.table(paste(dir,"moderate-Auto/mcf.txt",sep=""), sep="\t", row.names=NULL, header = TRUE)
         
-        dir <- "/cbcb/project-scratch/fdorri/Code/methylFlow/testing/coverage/moderate-Auto/"
+        #dir <- "/cbcb/project-scratch/fdorri/Code/methylFlow/testing/coverage/moderate-Auto/"
+        dir <- "/Users/faezeh/Desktop/project/methylFlow_analyses/coverage/moderate-Auto/"
         
         
     }
@@ -50,7 +53,8 @@ if (data[1] == "0"){
         
         mcfCoverage <- read.table(paste(dir,"simple-Auto/mcf.txt",sep=""), sep="\t", row.names=NULL, header = TRUE)
         
-        dir <- "/cbcb/project-scratch/fdorri/Code/methylFlow/testing/coverage/simple-Auto/"
+        #dir <- "/cbcb/project-scratch/fdorri/Code/methylFlow/testing/coverage/simple-Auto/"
+        dir <- "/Users/faezeh/Desktop/project/methylFlow_analyses/coverage/simple-Auto/"
         
         
     }
@@ -63,8 +67,8 @@ if ( data[2] == "2"){
     
     mcfCoverage <- read.table(paste(dir,"hard/mcf.txt",sep=""), sep="\t", row.names=NULL, header = TRUE)
     
-    dir <- "/cbcb/project-scratch/fdorri/Code/methylFlow/testing/coverage/hard/"
-    
+    #dir <- "/cbcb/project-scratch/fdorri/Code/methylFlow/testing/coverage/hard/"
+    dir <- "/Users/faezeh/Desktop/project/methylFlow_analyses/coverage/hard/"
 }
 
 if ( data[2] == "1"){
@@ -73,8 +77,8 @@ if ( data[2] == "1"){
     
     mcfCoverage <- read.table(paste(dir,"moderate/mcf.txt",sep=""), sep="\t", row.names=NULL, header = TRUE)
     
-    dir <- "/cbcb/project-scratch/fdorri/Code/methylFlow/testing/coverage/moderate/"
-    
+    #dir <- "/cbcb/project-scratch/fdorri/Code/methylFlow/testing/coverage/moderate/"
+    dir <- "/Users/faezeh/Desktop/project/methylFlow_analyses/coverage/moderate/"
     
 }
 if ( data[2] == "0"){
@@ -83,8 +87,8 @@ if ( data[2] == "0"){
     
     mcfCoverage <- read.table(paste(dir,"simple/mcf.txt",sep=""), sep="\t", row.names=NULL, header = TRUE)
     
-    dir <- "/cbcb/project-scratch/fdorri/Code/methylFlow/testing/coverage/simple/"
-    
+    #dir <- "/cbcb/project-scratch/fdorri/Code/methylFlow/testing/coverage/simple/"
+    dir <- "/Users/faezeh/Desktop/project/methylFlow_analyses/coverage/simple/"
     
 }
 }
@@ -113,37 +117,50 @@ ylab="Abundance Error",
 cex.lab= 2,
 cex.axis = 1.5)
 
-colors <- rainbow(ntrees)
+ltys = seq(1:ntrees)
+#colors <- rainbow(ntrees)
+mypalette<-brewer.pal(ntrees,"Dark2")
+pchs = seq(0,6)
 # add lines
 for (i in 1:ntrees) {
     j = step * (i-1) + start
     print(j)
     
     sel <- which(coverageAvg$threshold == j)
-    lines(coverageAvg$var[sel],
+    points(coverageAvg$var[sel],
     coverageAvg$abdncError[sel],
-    col = colors[i],
-    lwd=2)
+    col = mypalette[i],
+    pch = pchs[i],
+    cex = 0.5,
+    type = "b",
+    lwd = 2.5)
 }
-# cex scale the size
-#pch = 16 is circle
-lx <- seq(xrange[1] + 30 ,0.4*(xrange[2]-xrange[1])+ xrange[1], length.out=ntrees) + 5
-ly <- rep(yrange[2] + 0.1, ntrees)
-points(lx, ly,
-col = colors[1:28],
-pch = 16, cex=1,
-lwd=2)
 
-txt <- unique(coverageAvg$threshold)
-sel1 <- c(1, (1:count))
-
-text(xrange[1], yrange[2]+.1, "Legend", cex=1.3, pos=4,
-lwd=2)
-text(lx[sel1], ly[sel1], pos = 1, offset = 2, txt[sel1], cex=1.3, srt=90,
-lwd=2)
-
+legend("topright", legend = seq(start,end, by = step),
+       pch = pchs,
+       col = mypalette,
+     #  cex = 0.5,
+       lwd= 2.5)
 
 dev.off()
+# cex scale the size
+#pch = 16 is circle
+#lx <- seq(xrange[1] + 30 ,0.4*(xrange[2]-xrange[1])+ xrange[1], length.out=ntrees) + 5
+#ly <- rep(yrange[2] + 0.1, ntrees)
+#points(lx, ly,
+#col = colors[1:28],
+#pch = 16, cex=1,
+#lwd=2)
+
+#txt <- unique(coverageAvg$threshold)
+#sel1 <- c(1, (1:count))
+
+#text(xrange[1], yrange[2]+.1, "Legend", cex=1.3, pos=4,
+#lwd=2)
+#text(lx[sel1], ly[sel1], pos = 1, offset = 2, txt[sel1], cex=1.3, srt=90,
+#lwd=2)
+
+
 
 
 #### plot the Methyl Call  Error for different coverage rate
@@ -167,37 +184,51 @@ ylab="Methyl Call Error" ,
 cex.lab= 2,
 cex.axis = 1.5)
 
-colors <- rainbow(ntrees)
+
 # add lines
+ltys = seq(1:ntrees)
+#colors <- rainbow(ntrees)
+mypalette<-brewer.pal(ntrees,"Dark2")
+pchs = seq(0,6)
 for (i in 1:ntrees) {
     j = step * (i-1) + start
     print(j)
     
     sel <- which(coverageAvg$threshold == j)
-    lines(coverageAvg$var[sel],
+    points(coverageAvg$var[sel],
     coverageAvg$methylCallError[sel],
-    col = colors[i],
-    lwd=2)
+    col = mypalette[i],
+    pch = pchs[i],
+    cex = 0.5,
+    type = "b",
+    lwd = 2.5)
 }
-# cex scale the size
-#pch = 16 is circle
-lx <- seq(xrange[1] + 30 ,0.4*(xrange[2]-xrange[1])+ xrange[1], length.out=ntrees) + 5
-ly <- rep(yrange[2] + .1, ntrees)
-points(lx, ly,
-col = colors[1:28],
-pch = 16, cex=1,
-lwd=2)
 
-txt <- unique(coverageAvg$threshold)
-sel1 <- c(1, (1:count))
-
-text(xrange[1], yrange[2]+.1, "Legend", cex=1.3, pos=4,
-lwd=2)
-text(lx[sel1], ly[sel1] ,pos = 1, offset = 2, txt[sel1], cex=1.3, srt=90,
-lwd=2)
-
+legend("topright", legend = seq(start,end, by = step),
+       pch = pchs,
+       col = mypalette,
+       #  cex = 0.5,
+       lwd= 2.5)
 
 dev.off()
+
+# cex scale the size
+#pch = 16 is circle
+#lx <- seq(xrange[1] + 30 ,0.4*(xrange[2]-xrange[1])+ xrange[1], length.out=ntrees) + 5
+#ly <- rep(yrange[2] + .1, ntrees)
+#points(lx, ly,
+#col = colors[1:28],
+#pch = 16, cex=1,
+#lwd=2)
+
+#txt <- unique(coverageAvg$threshold)
+#sel1 <- c(1, (1:count))
+
+#text(xrange[1], yrange[2]+.1, "Legend", cex=1.3, pos=4,
+#lwd=2)
+#text(lx[sel1], ly[sel1] ,pos = 1, offset = 2, txt[sel1], cex=1.3, srt=90,
+#lwd=2)
+
 
 #### plot #TP for different coverage rate
 
@@ -216,10 +247,14 @@ ylim = c(yrange[1], yrange[2] + .1),
 xlim = xrange,
 xlab="coverage",
 ylab="TP",
-cex.lab= 1.5,
+cex.lab= 2,
 cex.axis = 1.5)
 
-colors <- rainbow(ntrees)
+ltys = seq(1:ntrees)
+#colors <- rainbow(ntrees)
+mypalette<-brewer.pal(ntrees,"Dark2")
+pchs = seq(0,6)
+
 # add lines
 for (i in 1:ntrees) {
     j = step * (i-1) + start
@@ -228,28 +263,37 @@ for (i in 1:ntrees) {
     sel <- which(coverageAvg$threshold == j)
     lines(coverageAvg$var[sel],
     coverageAvg$TP[sel],
-    col = colors[i],
-    lwd=2)
+    col = mypalette[i],
+    pch = pchs[i],
+    cex = 0.5,
+    type = "b",
+    lwd = 2.5)
 }
-# cex scale the size
-#pch = 16 is circle
-lx <- seq(xrange[1] + 25 ,0.3*(xrange[2]-xrange[1])+ xrange[1], length.out=ntrees) + 5
-ly <- rep(yrange[2] + .1, ntrees)
-points(lx, ly,
-col = colors[1:28],
-pch = 16, cex=1,
-lwd=2)
 
-txt <- unique(coverageAvg$threshold)
-sel1 <- c(1, (1:count))
-
-text(xrange[1], yrange[2]+.1, "Legend", cex=1, pos=4,
-lwd=2)
-text(lx[sel1], ly[sel1] - 0.02, txt[sel1], cex=1, srt=90,
-lwd=2)
-
+legend("bottomright", legend = seq(start,end, by = step),
+       pch = pchs,
+       col = mypalette,
+       #  cex = 0.5,
+       lwd= 2.5)
 
 dev.off()
+# cex scale the size
+#pch = 16 is circle
+#lx <- seq(xrange[1] + 25 ,0.3*(xrange[2]-xrange[1])+ xrange[1], length.out=ntrees) + 5
+#ly <- rep(yrange[2] + .1, ntrees)
+#points(lx, ly,
+#col = colors[1:28],
+#pch = 16, cex=1,
+#lwd=2)
+
+#txt <- unique(coverageAvg$threshold)
+#sel1 <- c(1, (1:count))
+
+#text(xrange[1], yrange[2]+.1, "Legend", cex=1, pos=4,
+#lwd=2)
+#text(lx[sel1], ly[sel1] - 0.02, txt[sel1], cex=1, srt=90,
+#lwd=2)
+
 
 
 
@@ -281,10 +325,15 @@ ylim = c(yrange[1], yrange[2] + .1),
 xlim = xrange,
 xlab="coverage",
 ylab="sensitivity" ,
-cex.lab= 1.5,
+cex.lab= 2,
 cex.axis = 1.5)
 
-colors <- rainbow(ntrees)
+
+ltys = seq(1:ntrees)
+#colors <- rainbow(ntrees)
+mypalette<-brewer.pal(ntrees,"Dark2")
+pchs = seq(0,6)
+
 # add lines
 for (i in 1:ntrees) {
     j = step * (i-1) + start
@@ -293,28 +342,38 @@ for (i in 1:ntrees) {
     sel <- which(coverageAvg$threshold == j)
     lines(coverageAvg$var[sel],
     sensitivity[sel],
-    col = colors[i],
-    lwd=2)
+    col = mypalette[i],
+    pch = pchs[i],
+    cex = 0.5,
+    type = "b",
+    lwd = 2.5)
 }
-# cex scale the size
-#pch = 16 is circle
-lx <- seq(xrange[1] + 25 ,0.3*(xrange[2]-xrange[1])+ xrange[1], length.out=ntrees) + 5
-ly <- rep(yrange[2] + .1, ntrees)
-points(lx, ly,
-col = colors[1:28],
-pch = 16, cex=1,
-lwd=2)
 
-txt <- unique(coverageAvg$threshold)
-sel1 <- c(1, (1:count))
-
-text(xrange[1], yrange[2]+.1, "Legend", cex=1, pos=4 ,
-lwd=2)
-text(lx[sel1], ly[sel1] - 0.02, txt[sel1], cex=1, srt=90,
-lwd=2)
-
+legend("bottomright", legend = seq(start,end, by = step),
+       pch = pchs,
+       col = mypalette,
+       #  cex = 0.5,
+       lwd= 2.5)
 
 dev.off()
+
+# cex scale the size
+#pch = 16 is circle
+#lx <- seq(xrange[1] + 25 ,0.3*(xrange[2]-xrange[1])+ xrange[1], length.out=ntrees) + 5
+#ly <- rep(yrange[2] + .1, ntrees)
+#points(lx, ly,
+#col = colors[1:28],
+#pch = 16, cex=1,
+#lwd=2)
+
+#txt <- unique(coverageAvg$threshold)
+#sel1 <- c(1, (1:count))
+
+#text(xrange[1], yrange[2]+.1, "Legend", cex=1, pos=4 ,
+#lwd=2)
+#text(lx[sel1], ly[sel1] - 0.02, txt[sel1], cex=1, srt=90,
+#lwd=2)
+
 
 
 
@@ -342,10 +401,14 @@ ylim = c(yrange[1], yrange[2] + .1),
 xlim = xrange,
 xlab="coverage",
 ylab="precision",
-cex.lab= 1.5,
+cex.lab= 2,
 cex.axis = 1.5 )
 
-colors <- rainbow(ntrees)
+ltys = seq(1:ntrees)
+#colors <- rainbow(ntrees)
+mypalette<-brewer.pal(ntrees,"Dark2")
+pchs = seq(0,6)
+
 # add lines
 for (i in 1:ntrees) {
     j = step * (i-1) + start
@@ -354,28 +417,40 @@ for (i in 1:ntrees) {
     sel <- which(coverageAvg$threshold == j)
     lines(coverageAvg$var[sel],
     precision[sel],
-    col = colors[i],
-    lwd=2)
+    col = mypalette[i],
+    pch = pchs[i],
+    cex = 0.5,
+    type = "b",
+    lwd = 2.5)
 }
-# cex scale the size
-#pch = 16 is circle
-lx <- seq(xrange[1] + 25 ,0.3*(xrange[2]-xrange[1])+ xrange[1], length.out=ntrees) + 5
-ly <- rep(yrange[2] + .1, ntrees)
-points(lx, ly,
-col = colors[1:28],
-pch = 16, cex=1,
-lwd=2)
 
-txt <- unique(coverageAvg$threshold)
-sel1 <- c(1, (1:count))
-
-text(xrange[1], yrange[2]+.1, "Legend", cex=1, pos=4,
-lwd=2)
-text(lx[sel1], ly[sel1] - 0.02, txt[sel1], cex=1, srt=90,
-lwd=2)
-
+legend("topright", legend = seq(start,end, by = step),
+       pch = pchs,
+       col = mypalette,
+       #  cex = 0.5,
+       lwd= 2.5)
 
 dev.off()
+
+# cex scale the size
+#pch = 16 is circle
+#lx <- seq(xrange[1] + 25 ,0.3*(xrange[2]-xrange[1])+ xrange[1], length.out=ntrees) + 5
+#ly <- rep(yrange[2] + .1, ntrees)
+#points(lx, ly,
+#col = colors[1:28],
+#pch = 16, cex=1,
+#lwd=2)
+
+#txt <- unique(coverageAvg$threshold)
+#sel1 <- c(1, (1:count))
+
+#text(xrange[1], yrange[2]+.1, "Legend", cex=1, pos=4,
+#lwd=2)
+#text(lx[sel1], ly[sel1] - 0.02, txt[sel1], cex=1, srt=90,
+#lwd=2)
+
+
+#dev.off()
 
 
 ######## plot FDR false discovery rate  for Coverage ###############
@@ -397,10 +472,14 @@ ylim = c(yrange[1], yrange[2] + .1),
 xlim = xrange,
 xlab="coverage",
 ylab="FDR" ,
-cex.lab= 1.5,
+cex.lab= 2,
 cex.axis = 1.5)
 
-colors <- rainbow(ntrees)
+ltys = seq(1:ntrees)
+#colors <- rainbow(ntrees)
+mypalette<-brewer.pal(ntrees,"Dark2")
+pchs = seq(0,6)
+
 # add lines
 for (i in 1:ntrees) {
     j = step * (i-1) + start
@@ -409,28 +488,39 @@ for (i in 1:ntrees) {
     sel <- which(coverageAvg$threshold == j)
     lines(coverageAvg$var[sel],
     FDR[sel],
-    col = colors[i],
-    lwd=2)
+    col = mypalette[i],
+    pch = pchs[i],
+    cex = 0.5,
+    type = "b",
+    lwd = 2.5)
 }
-# cex scale the size
-#pch = 16 is circle
-lx <- seq(xrange[1] + 25 ,0.3*(xrange[2]-xrange[1])+ xrange[1], length.out=ntrees) + 5
-ly <- rep(yrange[2] + .1, ntrees)
-points(lx, ly,
-col = colors[1:28],
-pch = 16, cex=1,
-lwd=2)
 
-txt <- unique(coverageAvg$threshold)
-sel1 <- c(1, (1:count))
-
-text(xrange[1], yrange[2]+.1, "Legend", cex=1, pos=4,
-lwd=2)
-text(lx[sel1], ly[sel1] - 0.02, txt[sel1], cex=1, srt=90,
-lwd=2)
-
+legend("topright", legend = seq(start,end, by = step),
+       pch = pchs,
+       col = mypalette,
+       #  cex = 0.5,
+       lwd= 2.5)
 
 dev.off()
+# cex scale the size
+#pch = 16 is circle
+#lx <- seq(xrange[1] + 25 ,0.3*(xrange[2]-xrange[1])+ xrange[1], length.out=ntrees) + 5
+#ly <- rep(yrange[2] + .1, ntrees)
+#points(lx, ly,
+#col = colors[1:28],
+#pch = 16, cex=1,
+#lwd=2)
+
+#txt <- unique(coverageAvg$threshold)
+#sel1 <- c(1, (1:count))
+
+#text(xrange[1], yrange[2]+.1, "Legend", cex=1, pos=4,
+#lwd=2)
+#text(lx[sel1], ly[sel1] - 0.02, txt[sel1], cex=1, srt=90,
+#lwd=2)
+
+
+#dev.off()
 
 
 ####### plot min cost flow error for differnet coverage ########
@@ -471,7 +561,11 @@ ylab="FP" ,
 cex.lab= 1.5,
 cex.axis = 1.5)
 
-colors <- rainbow(ntrees)
+ltys = seq(1:ntrees)
+#colors <- rainbow(ntrees)
+mypalette<-brewer.pal(ntrees,"Dark2")
+pchs = seq(0,6)
+
 # add lines
 for (i in 1:ntrees) {
     j = step * (i-1) + start
@@ -480,26 +574,37 @@ for (i in 1:ntrees) {
     sel <- which(coverageAvg$threshold == j)
     lines(coverageAvg$var[sel],
     FP[sel],
-    col = colors[i],
-    lwd=2)
+    col = mypalette[i],
+    pch = pchs[i],
+    cex = 0.5,
+    type = "b",
+    lwd = 2.5)
 }
-# cex scale the size
-#pch = 16 is circle
-lx <- seq(xrange[1] + 25 ,0.3*(xrange[2]-xrange[1])+ xrange[1], length.out=ntrees) + 5
-ly <- rep(yrange[2] + 0.15*(yrange[2]-yrange[1]), ntrees)
-points(lx, ly,
-col = colors[1:28],
-pch = 16, cex=1,
-lwd=2)
 
-txt <- unique(coverageAvg$threshold)
-sel1 <- c(1, (1:count))
-
-text(xrange[1], yrange[2]+.1, "Legend", cex=1, pos=4,
-lwd=2)
-text(lx[sel1], ly[sel1] - 0.01*(yrange[2]-yrange[1]), txt[sel1], cex=1, srt=90,
-lwd=2)
-
+legend("topright", legend = seq(start,end, by = step),
+       pch = pchs,
+       col = mypalette,
+       #  cex = 0.5,
+       lwd= 2.5)
 
 dev.off()
+# cex scale the size
+#pch = 16 is circle
+#lx <- seq(xrange[1] + 25 ,0.3*(xrange[2]-xrange[1])+ xrange[1], length.out=ntrees) + 5
+#ly <- rep(yrange[2] + 0.15*(yrange[2]-yrange[1]), ntrees)
+#points(lx, ly,
+#col = colors[1:28],
+#pch = 16, cex=1,
+#lwd=2)
+
+#txt <- unique(coverageAvg$threshold)
+#sel1 <- c(1, (1:count))
+
+#text(xrange[1], yrange[2]+.1, "Legend", cex=1, pos=4,
+#lwd=2)
+#text(lx[sel1], ly[sel1] - 0.01*(yrange[2]-yrange[1]), txt[sel1], cex=1, srt=90,
+#lwd=2)
+
+
+#dev.off()
 
