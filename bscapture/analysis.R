@@ -7,6 +7,7 @@ library("rafalib")
 #load("rafalib")
 
 chr <- lapply(seq(1:3), function(j) {
+  j=13
   datadir="~/Dropbox/testing/colon"
   pd=data.frame(subject=rep(4:6,2),
                 status=c("T", "T", "T","N", "N", "N"))
@@ -48,31 +49,58 @@ chr <- lapply(seq(1:3), function(j) {
   }
   dev.off()
   
+  gr <- lapply(objs, methPercentages2gr)
+  
+  
   objs2 <- lapply(objs, processMethylpats)
+  
+  
+  
   regionmethP <- lapply(objs2, regionMethPrecentage)
   patternmethP <- lapply(objs2, patternMethPrecentage)
   
   pdf(file.path(figdir,"meth_percentage.pdf"), height=4, width=6)
   mypar(2,3)
   for (i in seq(along=objs2)) {
+    keep <- width(components(objs[[i]])) > 100
+    tabR <- Reduce(rbind, regionmethP[[i]][keep])
+    tabP <- Reduce(rbind, patternmethP[[i]][keep])
+    filteredTabP = filter(tabP,Group.1>50699282,Group.1< 50710513)
+    filteredTabR = filter(tabR,Group.1>50699282,Group.1< 50710513)
+    tabCombined = na.omit(merge(filteredTabP,filteredTabR,by='Group.1'))
     
-    tabR <- Reduce(rbind, regionmethP[[i]])
-    tabP <- Reduce(rbind, patternmethP[[i]])
-    keepR <- which((tabR$Group.1 > 200000) & (tabR$Group.1 < 1000000))
-    keepP <- match(tabR$Group.1[keepR], tabP$Group.1)
-    plot(tabR$x[keepR],tabP$x[keepP],
+    plot(tabCombined[,2:3],
+         bty='l',
          main=names(objs2)[i],
-         xlab="region methyl Percentage",
-         ylab="pattern methyl Precentage",
+         ylab="region methyl Percentage",
+         xlab="pattern methyl Precentage",
          cex = 0.2,
-         cex.lab=.4)
-    #keep <- names(regionmethP[[i]])
-    #for (j in seq(1:length(keep))){
-    #lines(regionmethP[[i]][j][[1]]$Group.1,regionmethP[[i]][j][[1]]$x,main=names(objs2)[i],xlab="x",ylab="meth Precentage")
-    #}
+         cex.lab=.9)
   }
   dev.off()
   
+  
+  pdf(file.path(figdir,"meth_percentage_pos.pdf"), height=4, width=6)
+  mypar(1,1)
+  for (i in seq(along=objs2)) {
+    keep <- width(components(objs[[i]])) > 100
+    tabR <- Reduce(rbind, regionmethP[[i]][keep])
+    tabP <- Reduce(rbind, patternmethP[[i]][keep])
+    filteredTabP = filter(tabP,Group.1>50699282,Group.1< 50710513)
+    filteredTabR = filter(tabR,Group.1>50699282,Group.1< 50710513)
+    tabCombined = na.omit(merge(filteredTabP,filteredTabR,by='Group.1'))
+    
+    plot(filteredTabR,
+         bty='l',
+         main=names(objs2)[i],
+         ylab="region methyl Percentage",
+         xlab="position",
+         cex = 0.2,
+         cex.lab=.9, col = "blue")
+    #points(tabCombined[,1:2], col = "red")
+    
+  }
+  dev.off()
   
   
   compent <- sapply(objs, componentEntropy)
