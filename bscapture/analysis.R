@@ -38,47 +38,50 @@ boxplot(widths, main="reconstructed fragment size")
 boxplot(ncpgs, main="number of cpgs in reconstructed fragments")
 dev.off()
 
+####
+filteredObjs <- lapply(filteredObjs, mfFilterBy, minNumberOfPatterns=1)
+
+npats <- sapply(filteredObjs, npatterns, by.component=TRUE)
+compCoverage <- sapply(filteredObjs, counts, level="component", kind="raw")
+
+pdf(file.path(figdir,"patt_by_coverage.pdf"), height=4, width=6)
+mypar(2,3)
   
-  npats <- sapply(objs, function(obj) npatterns(obj))
-  
-  pdf(file.path(figdir,"patt_by_coverage.pdf"), height=4, width=6)
-  mypar(2,3)
-  
-  for (i in seq(along=objs)) {
-    keep <- width(components(objs[[i]])) > 100
-    plot(compcoverage[[i]][keep], npats[[i]][keep],main=names(objs)[i],xlab="coverage",ylab="num. patterns")
-  }
-  dev.off()
-  
-  gr <- lapply(objs, methPercentages2gr)
-  
-  
-  objs2 <- lapply(objs, processMethylpats)
-  
-  
-  
-  regionmethP <- lapply(objs2, regionMethPrecentage)
-  patternmethP <- lapply(objs2, patternMethPrecentage)
-  
-  pdf(file.path(figdir,"meth_percentage.pdf"), height=4, width=6)
-  mypar(2,3)
-  for (i in seq(along=objs2)) {
-    keep <- width(components(objs[[i]])) > 100
-    tabR <- Reduce(rbind, regionmethP[[i]][keep])
-    tabP <- Reduce(rbind, patternmethP[[i]][keep])
-    filteredTabP = filter(tabP,Group.1>50699282,Group.1< 50710513)
-    filteredTabR = filter(tabR,Group.1>50699282,Group.1< 50710513)
-    tabCombined = na.omit(merge(filteredTabP,filteredTabR,by='Group.1'))
+for (i in seq(along=filteredObjs)) {
+    plot(compCoverage[[i]], npats[[i]],main=names(filteredObjs)[i],xlab="coverage",ylab="num. patterns")
+}
+dev.off()
+
+
+rawCpgs <- lapply(filteredObjs, makeCpgGR, kind="raw")
+estimatedCpgs <- lapply(filteredObjs, makeCpgGR, kind="estimated")
+
+olaps <- lapply(seq(along=rawCpgs), function(i) findOverlaps(rawCpgs[[i]], estimatedCpgs[[i]]))
+betaGR <- lapply(seq(along=olaps), function(i) {
+    gr <- rawCpgs[[i]][queryHits(olaps[[i]]),]
+    out <- gr
+    mcols(out) <- NULL
     
-    plot(tabCombined[,2:3],
+    out$rawBeta <- gr$Beta
+    gr <- estimatedCpgs[[i]][subjectHits(olaps[[i]]),]
+    out$estimatedBeta <- gr$Beta
+    out
+})
+
+pdf(file.path(figdir,"meth_percentage.pdf"), height=4, width=6)
+mypar(2,3)
+
+for (i in seq(along=betaGR)) {
+    gr <- betaGR[[i]]
+    plot(gr$rawBeta,gr$estimatedBeta,
          bty='l',
-         main=names(objs2)[i],
-         ylab="region methyl Percentage",
-         xlab="pattern methyl Precentage",
+         main=names(filteredObjs)[i],
+         ylab="pattern methyl Percentage",
+         xlab="region methyl Precentage",
          cex = 0.2,
          cex.lab=.9)
-  }
-  dev.off()
+}
+dev.off()
   
   
   pdf(file.path(figdir,"meth_percentage_pos.pdf"), height=4, width=6)
