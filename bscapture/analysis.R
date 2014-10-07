@@ -23,14 +23,19 @@ names(objs) <- pd$dirname
 filteredObjs <- lapply(objs, mfFilterBy, minComponentCoverage=100, minComponentWidth=86)
 names(filteredObjs) <- names(objs)
 
+filteredObjs <- lapply(filteredObjs, processMethylpats)
+
 figdir <- file.path("figs")
 
-pdf(file.path(figdir,"fragment_length.pdf"),height=4,width=6)
+pdf(file.path(figdir,"fragment_length.pdf"),height=4,width=4)
 mypar(1,1)
 
 widths <- lapply(filteredObjs, function(obj) width(components(obj)))
-names(widths) <- gsub("CAP_", "", names(widths))
+ncpgs <- lapply(filteredObjs, function(obj) ncpgs(obj, level="pattern", summary="max"))
+
+names(ncpgs) <- names(widths) <- gsub("CAP_", "", names(widths))
 boxplot(widths, main="reconstructed fragment size")
+boxplot(ncpgs, main="number of cpgs in reconstructed fragments")
 dev.off()
 
   
