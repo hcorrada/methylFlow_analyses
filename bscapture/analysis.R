@@ -1,42 +1,38 @@
 library("devtools")
-path ="~/Desktop/project/methylFlow/methylFlowr"
+path = "../../src/methylFlow/methylFlowr"
 load_all(path)
 
 install_github("rafalib","ririzarr")
 library("rafalib")
 #load("rafalib")
 
-chr <- lapply(seq(1:3), function(j) {
-  j=13
-  datadir="~/Dropbox/testing/colon"
-  pd=data.frame(subject=rep(4:6,2),
-                status=c("T", "T", "T","N", "N", "N"))
-  pd$dirname=sprintf("CAP_%s_%d", pd$status, pd$subject)
-  objs <- lapply(seq(len=nrow(pd)), function(i) {
+datadir <- "output"
+pd <- data.frame(subject=rep(4:6,2), status=c("T", "T", "T","N", "N", "N"))
+j <- "13"
+seqlvls <- structure("chr13", names="13")
+
+pd$dirname=sprintf("CAP_%s_%d", pd$status, pd$subject)
+objs <- lapply(seq(len=nrow(pd)), function(i) {
     curdir <- file.path(datadir,pd$dirname[i],j)
     tmp <- read.methylflow.dir(curdir, pd$dirname[i],has.header=TRUE)
-    print(seqlevels(tmp@regions))
-    tmp@regions <- renameSeqlevels(tmp@regions,paste("chr",j,sep=""))
-    tmp@patterns <- renameSeqlevels(tmp@patterns, paste("chr",j,sep=""))
-    tmp@components <- renameSeqlevels(tmp@components, paste("chr",j,sep=""))
+    tmp <- renameSeqlevels(tmp, seqlvls)
     tmp
-  })
-  
-  
-  
-  names(objs) <- pd$dirname
-  
-  compcoverage <- sapply(objs, function(obj) counts(obj, level="component"))
-  
-  figdir <- file.path(datadir,"figs",j)
-  
-  pdf(file.path(figdir,"fragment_length.pdf"),height=4,width=6)
-  mypar(2,3)
-  
-  for (i in seq(along=objs)) {
-    hist(width(components(objs[[i]]))[compcoverage[[i]]>100], nc=10, main=names(objs)[i],xlab="assembled fragment size")
-  }
-  dev.off()
+})
+names(objs) <- pd$dirname
+
+filteredObjs <- lapply(objs, mfFilterBy, minComponentCoverage=100, minComponentWidth=86)
+names(filteredObjs) <- names(objs)
+
+figdir <- file.path("figs")
+
+pdf(file.path(figdir,"fragment_length.pdf"),height=4,width=6)
+mypar(1,1)
+
+widths <- lapply(filteredObjs, function(obj) width(components(obj)))
+names(widths) <- gsub("CAP_", "", names(widths))
+boxplot(widths, main="reconstructed fragment size")
+dev.off()
+
   
   npats <- sapply(objs, function(obj) npatterns(obj))
   
