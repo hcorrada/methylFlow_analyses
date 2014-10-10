@@ -236,22 +236,97 @@ for (i in indexes) {
 dev.off()
 
 
+load_all(path)
+entrStats <- lapply(filteredObjs, getEntropyStats)
+jointGR <- disjoin(unlist(do.call("GRangesList", entrStats)))
 
+makeVec <- function(gr, jointGR, slot) {
+    olaps <- findOverlaps(jointGR, gr)
+    out <- rep(NA,length(jointGR))
+    out[queryHits(olaps)] <- mcols(gr)[[slot]][subjectHits(olaps)]
+    out
+}
+entrMat <- sapply(entrStats, makeVec, jointGR, "entr")
+nentrMat <- sapply(entrStats, makeVec, jointGR, "normEntr")
+giniMat <- sapply(entrStats, makeVec, jointGR, "gini")
+maxEntrMat <- sapply(entrStats, makeVec, jointGR, "maxEntr")
 
+colData=DataFrame(pd)
+rownames(colData)=pd$dirname
+statsSE <- SummarizedExperiment(rowData=jointGR,
+                                colData=colData,
+                                assays=SimpleList(entropy=entrMat,
+                                    normEntropy=nentrMat,
+                                    maxEntropy=maxEntrMat,
+                                    gini=giniMat))
 
+pdf(file.path(figdir, "entropy.pdf"),width=9,height=3)
+mypar(1,3)
 
+for (i in 1:3) {
+    mat = assay(statsSE,"normEntropy")[,c(i+3,i)]
+    plot(mat,main="normalized entropy" )
+    abline(0,1)
+}
 
+for (i in 1:3) {
+    mat = assay(statsSE,"normEntropy")[,c(i+3,i)]
+    d = mat[,2]-mat[,1]
+    hist(d,nc=50,xlab=sprintf("%s-%s", colnames(mat)[2], colnames(mat)[1]),main="normalized entropy")
+}
 
-plotRegion <- GRanges("chr13", IRanges(50699282, 50710513))
-seqinfo(plotRegion) <- seqinfo(filteredObjs[[1]])
+for (i in 1:3) {
+    mat = assay(statsSE,"maxEntropy")[,c(i+3,i)]
+    plot(mat, main="log num patterns")
+    abline(0,1)
+}
 
-objs2 <- lapply(objs, mfFilterBy, minNumberOfPatterns=1)
+for (i in 1:3) {
+    mat = assay(statsSE,"maxEntropy")[,c(i+3,i)]
+    d = mat[,2]-mat[,1]
+    hist(d,nc=50,xlab=sprintf("%s-%s", colnames(mat)[2], colnames(mat)[1]),main="log num patterns")
+}
+dev.off()
 
-pdf(file.path(figdir, "patterns.pdf"), height=4, width=24)
-mypar(1,1)
-for (i in seq(along=objs2)) {
-    obj <- objs2[[i]]
-    plotPatterns(obj, plotRegion, main=names(objs2)[i])
+jointGR <- disjoin(unlist(do.call(GRangesList, betaGR)))
+betaMat <- sapply(betaGR, makeVec, jointGR, "estimatedBeta")
+normEntrMat <- sapply(entrStats, makeVec, jointGR, "normEntr")
+entrMat <- sapply(entrStats, makeVec, jointGR, "entr")
+cpgSE <- SummarizedExperiment(rowData=jointGR,
+                              colData=colData,
+                              assays=SimpleList(beta=betaMat,
+                                  entropy=entrMat,
+                                  normEntropy=normEntrMat))
+
+pdf(file.path(figdir,"methEntropy.pdf"),width=9,height=3)
+mypar(1,3)
+
+for (i in 1:3) {
+    mat = assay(cpgSE, "entropy")[,c(i+3,i)]
+    plot(mat,main="entropy")
+}
+
+for (i in 1:3) {
+    mat = assay(cpgSE,"entropy")[,c(i+3,i)]
+    d = mat[,2]-mat[,1]
+    xlab="tumor - normal entropy"
+    main=paste("sample", gsub("CAP_[N|T]_","",colnames(mat)[1]))
+    hist(d,nc=50,xlab=xlab,main=main)
+}
+
+for (i in 1:3) {
+    mat = assay(cpgSE, "beta")[,c(i+3,i)]
+    plot(mat,main="methylation")
+}
+
+for (i in 1:3) {
+    mat = assay(cpgSE,"beta")[,c(i+3,i)]
+    d = mat[,2]-mat[,1]
+    hist(d,nc=50,xlab=sprintf("%s-%s", colnames(mat)[2], colnames(mat)[1]),main="methylation")
+}
+
+for (i in 1:6) {
+    plot(assay(cpgSE,"beta")[,i], assay(cpgSE,"entropy")[,i],main=pd$dirname[i])
 }
 dev.off()
 
@@ -260,47 +335,12 @@ dev.off()
 
 
 
+################
 
+compflow <-  tapply(patterns(obj)$abundance, patterns(obj)$cid, sum)
+patternp <- patterns(obj)$abundance / compflow[as.character(patterns(obj)$cid)]
 
-
-
-
-
-
-
-
-
-
-
-pdf(file.path(figdir,"meth_percentage_pos.pdf"), height=4, width=6)
-  mypar(1,1)
-  for (i in seq(along=objs2)) {
-    keep <- width(components(objs[[i]])) > 100
-    tabR <- Reduce(rbind, regionmethP[[i]][keep])
-    tabP <- Reduce(rbind, patternmethP[[i]][keep])
-    filteredTabP = filter(tabP,Group.1>50699282,Group.1< 50710513)
-    filteredTabR = filter(tabR,Group.1>50699282,Group.1< 50710513)
-    tabCombined = na.omit(merge(filteredTabP,filteredTabR,by='Group.1'))
-    
-    plot(filteredTabR,
-         bty='l',
-         main=names(objs2)[i],
-         ylab="region methyl Percentage",
-         xlab="position",
-         cex = 0.2,
-         cex.lab=.9, col = "blue")
-    #points(tabCombined[,1:2], col = "red")
-    
-  }
-  dev.off()
-  
-  
-  compent <- sapply(objs, componentEntropy)
-  compMeth <- lapply(objs2, componentAvgMeth)
-  
-  posent <- sapply(objs, positionEntropy)
-  
-  tmp <- lapply(4:6, function(subj) {
+tmp <- lapply(4:6, function(subj) {
     nindex <- match(paste("CAP","N",subj,sep="_"), names(objs))
     tindex <- match(paste("CAP","T",subj,sep="_"), names(objs))
     nobj <- objs[[nindex]]
@@ -318,11 +358,11 @@ pdf(file.path(figdir,"meth_percentage_pos.pdf"), height=4, width=6)
          npats=cbind(npats[[nindex]][iind], npats[[tindex]][jind]),
          ent=cbind(compent[[nindex]][iind], compent[[tindex]][jind]),
          meth=cbind(compMeth[[nindex]][iind], compMeth[[tindex]][jind]))
-  })
-  
-  pdf(file.path(figdir,"compcompare.pdf"),height=4,width=12)
-  mypar(1,3)
-  
+})
+
+pdf(file.path(figdir,"compcompare.pdf"),height=4,width=12)
+mypar(1,3)
+
   for (i in 1:3) {
     rng <- range(tmp[[i]]$npats, na.rm=TRUE)
     plot(tmp[[i]]$npats, xlim=rng, ylim=rng, xlab="normal num. patterns", ylab="tumor num. patterns",cex.lab=1.7,cex=1.3,pch=19)
@@ -336,12 +376,12 @@ pdf(file.path(figdir,"meth_percentage_pos.pdf"), height=4, width=6)
     rng <- range(nent,na.rm=TRUE)
     plot(nent, xlim=rng, ylim=rng, xlab="normal entropy (normalized)", ylab="tumor entropy (normalized",cex.lab=1.7,cex=1.3,pch=19)
     abline(0,1)
-  }
-  dev.off()
+}
+dev.off()
   
-  pdf(file.path(figdir, "compcompare2.pdf"), height=4, width=12)
-  mypar(1,3)
-  
+pdf(file.path(figdir, "compcompare2.pdf"), height=4, width=12)
+mypar(1,3)
+
   for (i in 1:3) {
     nent <- tmp[[i]]$ent / log(tmp[[i]]$npats)
     deltam <- tmp[[i]]$meth[,2]-tmp[[i]]$meth[,1]
