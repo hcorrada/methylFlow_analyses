@@ -52,10 +52,24 @@ make install
 popd
 ```
 
+## Running installed programs
+
+```bash
+# the methylFlow executable
+${MF_INSTALL_DIR}/bin/methylFlow
+
+# the simulator
+${MF_INSTALL_DIR}/bin/mfSimulate
+
+## the evaluation programs
+${MF_INSTALL_DIR}/bin/mfEvaluation
+${MF_INSTALL_DIR}/bin/avgEvaluation
+```
+
 ## Running on bscapture data
 
 ```bash
 pushd ${MF_PROJECT_ROOT}/exps/bscapture
-sh run_cpgmf.sh
+sh run_cpgmf.sh 2>&1 >/dev/null
 popd
 ```
