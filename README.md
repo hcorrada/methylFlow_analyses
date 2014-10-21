@@ -1,28 +1,18 @@
 # How to make things work
 
-## Directory layout
+## Getting started
 
-Setup the methylflow project directory as follows:
-
-<pre>
-parent_dir
-| exps (this will contain this repository)
-| src (this will contain the source repo)
-| install (this is where all binaries, libraries and headers are installed)
-</pre>
-
-To set this up, go to your project directory
-and run
+Create a directory for the methylFlow project. Once there do
 
 ```bash
-git co https://github.com/hcorrada/methylFlow_analyses.git exps  
-mkdir src && cd src  
-git co https://github.com/hcorrada/methylFlow.git  
+git co https://github.com/hcorrada/methylFlow_analyses.git exps
+mkdir src && cd src
+git co https://github.com/hcorrada/methylFlow.git
 ```
 
 ## Setting up
 
-First, set the location of the parent directory and install
+Set the location of the parent directory and install
 directories variables (starting from project directory)
 
 ```bash
@@ -51,6 +41,17 @@ make
 make install
 popd
 ```
+
+## Directory layout
+
+At this point, the layout should be
+
+<pre>
+parent_dir
+| exps (this will contain this repository)
+| src (this will contain the source repo)
+| install (this is where all binaries, libraries and headers were installed)
+</pre>
 
 ## Running installed programs
 
