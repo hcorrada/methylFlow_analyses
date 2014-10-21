@@ -14,7 +14,7 @@
 //#include <lemon/lp_base.h>
 #include <lemon/lp.h>
 #include <lemon/maps.h>
-#include <mflib/MethylRead.hpp>
+#include "MethylRead.hpp"
 //#include <lemon/bipartite_matching.h>
 //#include <lemon/concepts/bpgraph.h>
 //lemon::Lp lp;

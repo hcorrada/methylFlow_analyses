@@ -15,7 +15,7 @@
 //#include <lemon/lp_base.h>
 #include <lemon/lp.h>
 #include <lemon/maps.h>
-#include <mflib/MethylRead.hpp>
+#include "MethylRead.hpp"
 //#include <lemon/bipartite_matching.h>
 //#include <lemon/concepts/bpgraph.h>
 //lemon::Lp lp;
@@ -202,9 +202,9 @@ float cost(Graph::Node u, Graph::Node v) {
     
     //cout << "common " << common <<  endl;
     
-    int mismatch = readU->cpgOffset.size() + readV->cpgOffset.size() - match - common ;
+    int mismatch = readU->cpgs.size() + readV->cpgs.size() - match - common ;
     //int mismatch = common - match;
-    int totalCpG = readU->cpgOffset.size() + readV->cpgOffset.size() - common;
+    int totalCpG = readU->cpgs.size() + readV->cpgs.size() - common;
     //cout << "mismatch " << mismatch <<  endl;
     
     //cout << "totalCpG " << totalCpG <<  endl;
@@ -380,7 +380,7 @@ void computeErrorMatrix(double threshold) {
 
     methylCallError = methylCallError/match;
     abndncError = sqrt(abndncError/TP);
-    if( !TP == 0 ){
+    if( !(TP == 0) ){
         evalFile << threshold << "\t" << abndncError << "\t" << methylCallError << "\t" << TP << "\t" << FN  << "\t"  << FP << std::endl;
         thr.push_back(threshold);
         abdncErr_avg_map[threshold].push_back(abndncError);
@@ -485,9 +485,9 @@ float computeMinCostFlowError(){
 
 void computeMethylPercentage(){
     for (unsigned int i=0; i < trueMethylData.size(); i++) {
-        for (unsigned int j=0; j < trueMethylData.at(i)->cpgOffset.size(); j++) {
-            int position = trueMethylData.at(i)->cpgOffset.at(j) + trueMethylData.at(i)->start();
-            bool meth = trueMethylData.at(i)->methyl.at(j);
+        for (unsigned int j=0; j < trueMethylData.at(i)->cpgs.size(); j++) {
+            int position = trueMethylData.at(i)->cpgs.at(j).offset + trueMethylData.at(i)->start();
+            bool meth = trueMethylData.at(i)->cpgs.at(j).methyl;
             if (find (cpgPos.begin(), cpgPos.end(), position) == cpgPos.end()) {
                 cpgPos.push_back(position);
             }
@@ -505,9 +505,9 @@ void computeMethylPercentage(){
     }
     for (unsigned int i=0; i < estimatedMethylData.size(); i++) {
         //cerr << "estimated " << endl;
-        for (unsigned int j=0; j < estimatedMethylData.at(i)->cpgOffset.size(); j++) {
-            int position = estimatedMethylData.at(i)->cpgOffset.at(j) + estimatedMethylData.at(i)->start();
-            bool meth = estimatedMethylData.at(i)->methyl.at(j);
+        for (unsigned int j=0; j < estimatedMethylData.at(i)->cpgs.size(); j++) {
+            int position = estimatedMethylData.at(i)->cpgs.at(j).offset + estimatedMethylData.at(i)->start();
+            bool meth = estimatedMethylData.at(i)->cpgs.at(j).methyl;
             if (find (cpgPos.begin(), cpgPos.end(), position) == cpgPos.end()) {
                 cpgPos.push_back(position);
             }
@@ -525,9 +525,9 @@ void computeMethylPercentage(){
     
     for (unsigned int i=0; i < readMethylData.size(); i++) {
         //cerr << "short read " << endl;
-        for (unsigned int j=0; j < readMethylData.at(i)->cpgOffset.size(); j++) {
-            int position = readMethylData.at(i)->cpgOffset.at(j) + readMethylData.at(i)->start();
-            bool meth = readMethylData.at(i)->methyl.at(j);
+        for (unsigned int j=0; j < readMethylData.at(i)->cpgs.size(); j++) {
+            int position = readMethylData.at(i)->cpgs.at(j).offset + readMethylData.at(i)->start();
+            bool meth = readMethylData.at(i)->cpgs.at(j).methyl;
             if (find (cpgPos.begin(), cpgPos.end(), position) == cpgPos.end()) {
                 cpgPos.push_back(position);
             }
