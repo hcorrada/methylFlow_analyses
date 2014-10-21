@@ -2,29 +2,28 @@
 
 ### run :  sh runmf.sh 
 
-# assumes that directory is laid out as:
-# methylFlow
-# | tools/bin/methylFlow (this is the executable)
-# | src/methylFlow (this is the source directory)
-# | exps/bscapture (this script is in this directory)
-# | | reads (this is where the data is)
+# see ../README.md
+#
+# assumes methylFlow binary is installed
+# in ${MF_INSTALL_DIR}/bin"
+
+# the input data is located at
+# "./reads"
+
+# and organized as
 # | | | CAP_<condition>_<subject> (for each subject and condition [N|T])
 # | | | | <chr>.methylation.withsub.tsv (this is the read file for one chromosme)
-# | | output (this is where the output goes, this directory is created by this script if it doesn't exist)
+
+# output will be written to 
+# "./cpg_output"
+
+# and organized as
 # | | | CAP_<condition>_<subject> (output directory for each subject and condition)
 # | | | | <chr> (this is where the output for a given chromosome will be placed)
 
-# to compile the exectuable so it is found where expected do
-# pushd ../../src/methylFlow
-# mkdir build && pushd build
-# cmake -DCMAKE_INSTALL_PREFIX="../../tools" ..
-# make
-# make install
-# popd && popd
-
-mf="../../tools/bin/methylFlow"
-indir="reads"
-outdir="cpg_output"
+mf="${MF_INSTALL_DIR}/bin/methylFlow"
+indir="./reads"
+outdir="./cpg_output"
 
 subjects=$(seq 4 6)
 conditions="N T"

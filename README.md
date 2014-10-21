@@ -30,7 +30,7 @@ cd exps
 source setup.sh
 ```
 
-## Compiling and installing methyl flow
+## Compiling and installing methylFlow
 
 ```bash
 pushd ${MF_PROJECT_ROOT}/src/methylFlow
@@ -52,4 +52,10 @@ make install
 popd
 ```
 
+## Running on bscapture data
 
+```bash
+pushd ${MF_PROJECT_ROOT}/exps/bscapture
+sh run_cpgmf.sh
+popd
+```
