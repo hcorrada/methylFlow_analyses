@@ -93,7 +93,7 @@ Graph::Node addNode_Read(MethylRead *read, float abndnc)
     return n;
 }
 void readTruePattern(int start, int end){
-	// "s" is for start position, "e" is for end position
+    //cout << " s is for start position, e is for end position" << endl;
 	
 	string chr, methylString;
     string dummyLine;
@@ -105,7 +105,7 @@ void readTruePattern(int start, int end){
 
 		i++;
 		truePatternFile >> chr >> s >> e >> cid >> pid >> abundance >> methylString;
-        //cout << "Ture read : "<< chr << " " << s << " " << e <<endl;
+        cout << "Ture read : "<< chr << " " << s << " " << e <<endl;
 		if( s >= start && e <= end){
             MethylRead* m = new MethylRead(s, e-s+1);
             m->parseMethyl(methylString);
@@ -116,6 +116,7 @@ void readTruePattern(int start, int end){
             trueAbundanceData.push_back(abundance);
 		}
 	}
+    //cout << "out of while loop" << endl;
     float sum =0;
     for(unsigned int j= 0; j<trueAbundanceData.size(); j++){
         sum += trueAbundanceData.at(j);
@@ -123,24 +124,32 @@ void readTruePattern(int start, int end){
     for(unsigned int j= 0; j<trueAbundanceData.size(); j++){
         trueAbundanceData.at(j) = trueAbundanceData.at(j)/sum ;
     }
-    
+    //cout << "out of read true pattern" << endl;
+
 }
 
 void readEstimatedPattern(int start, int end){
 	// "s" is for start position, "e" is for end position
-	string  chr, methylString;
+    //cout << "start of readEstimated Patterns" << endl;
+	string  chr, methylString, regions;
     string dummyLine;
+    int maxAbd= 0;
     getline(estimatedPatternFile, dummyLine);
+    //cout << "dummy line = " << dummyLine << endl;
 	int i = 0;
 	while(!estimatedPatternFile.eof()) {
         int  s = -100, e = -100, cid, pid;
         float abundance = 0 ;
 
 		i++;
-		estimatedPatternFile >> chr >> s >> e >> cid >> pid >> abundance >> methylString;
+		estimatedPatternFile >> chr >> s >> e >> cid >> pid >> abundance >> methylString >> regions;
+        // we assume the patterns are sorted by their abundance.
+       // if(i==1)
+        maxAbd = std::max(double(maxAbd), double(abundance));
         
+        //cout << "start = " << start << " s= " << s  << " abundance= " << abundance << " methylstring = " << methylString << endl;
         //cout << "Estimated read : "<< chr << " " << s << " " << e << "  " << methylString << endl;
-		if( s >= start -1  &&  e <= end){
+		if( s >= start -1  &&  e <= end && abundance > 0.01*maxAbd && methylString!="*"){
             
             MethylRead* m = new MethylRead(s, e-s+1);
             //cerr << "befor parse" << endl;
@@ -148,12 +157,13 @@ void readEstimatedPattern(int start, int end){
             m->parseMethyl(methylString);
             //cerr << "befor write" << endl;
             //m->write();
-            //cerr << "after write" << endl;
-            
+            //cerr << "i = " << i << endl;
             estimatedMethylData.push_back(m);
             estimatedAbundanceData.push_back(abundance);
 		}
 	}
+    //cout << "out of while loop" << endl;
+
     float sum =0;
     for(unsigned int j= 0; j<estimatedAbundanceData.size(); j++){
         sum += estimatedAbundanceData.at(j);
@@ -161,7 +171,8 @@ void readEstimatedPattern(int start, int end){
     for(unsigned int j= 0; j<estimatedAbundanceData.size(); j++){
         estimatedAbundanceData.at(j) = estimatedAbundanceData.at(j)/sum ;
     }
-    
+    //cout << "out of read estimated pattern" << endl;
+ 
 }
 
 void readShortRead(int start, int end){
@@ -250,7 +261,7 @@ void buildGraph() {
         BlueNode v = g.target(e);
         length[e] = cost(u, v);
         
-        //cout << "Cost arc (" << g.id(u) <<", " << g.id(v) << ") = " << length[e] << endl;
+       // cout << "Cost arc (" << g.id(u) <<", " << g.id(v) << ") = " << length[e] << endl;
     }
     
     cout << "build done" << endl;
@@ -578,7 +589,7 @@ int main (int argc, char* argv[]) {
 	int start, end;
     std::stringstream buffer;
     
-	//cout << "start main" << endl;
+	cout << "start main" << endl;
     
 	if(argc < 6){
 		cout << "Please enter your input" << endl;
@@ -661,8 +672,9 @@ int main (int argc, char* argv[]) {
     
 	
 	//################     read the input .tsv data to the "line" number
-	cout << "reading patterns " << start << endl;
+	cout << "reading true patterns " << start << " " << end << endl;
 	readTruePattern(start , end);
+    cout << "reading estimated patterns " << start << " " << end << endl;
     readEstimatedPattern(start , end);
     cout << "reading short read " <<  endl;
     readShortRead(start, end);

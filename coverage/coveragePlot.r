@@ -9,6 +9,7 @@
 ### par2 = 1 > moderate
 ### par2 = 2 > Hard
 
+library("RColorBrewer")
 
 start= 0.1
 step= 0.05
@@ -20,41 +21,45 @@ count = (end - start) / step + 1
 data <- commandArgs(T)
 print(data)
 #dir <- "/cbcb/project-scratch/fdorri/Code/methylFlow/testing/coverage/"
-dir <- "/Users/faezeh/Desktop/project/methylFlow_analyses/coverage/"
+#dir <- "/Users/faezeh/Desktop/project/methylFlow_analyses/coverage/"
+wdir <- getwd();
+
 #data[1]= 0
 #data[2] = 2
 ##### reading files ##################
 if (data[1] == "0"){
     if ( data[2] == "2"){
+        dir <- paste(wdir,"/hard-Auto/",sep="");
+        print(dir);
         print("Hard Setting Plot")
-        coverageAvg <- read.table(paste(dir,"hard-Auto/evalAvg.txt",sep=""), sep="\t", row.names=NULL, header = TRUE)
+        coverageAvg <- read.table(paste(dir,"evalAvg.txt",sep=""), sep="\t", row.names=NULL, header = TRUE)
         
-        mcfCoverage <- read.table(paste(dir,"hard-Auto/mcf.txt",sep=""), sep="\t", row.names=NULL, header = TRUE)
+        mcfCoverage <- read.table(paste(dir,"mcf.txt",sep=""), sep="\t", row.names=NULL, header = TRUE)
         
-        #dir <- "/cbcb/project-scratch/fdorri/Code/methylFlow/testing/coverage/hard-Auto/"
-        dir <- "/Users/faezeh/Desktop/project/methylFlow_analyses/coverage/hard-Auto/"
-        
+    
     }
     
     if ( data[2] == "1"){
+        
         print("Moderate Setting Plot")
-        coverageAvg <- read.table(paste(dir,"moderate-Auto/evalAvg.txt",sep=""), sep="\t", row.names=NULL, header = TRUE)
+        dir <- paste(wdir,"/moderate-Auto/",sep="");
+        print(dir);
+
+        coverageAvg <- read.table(paste(dir,"evalAvg.txt",sep=""), sep="\t", row.names=NULL, header = TRUE)
         
-        mcfCoverage <- read.table(paste(dir,"moderate-Auto/mcf.txt",sep=""), sep="\t", row.names=NULL, header = TRUE)
-        
-        #dir <- "/cbcb/project-scratch/fdorri/Code/methylFlow/testing/coverage/moderate-Auto/"
-        dir <- "/Users/faezeh/Desktop/project/methylFlow_analyses/coverage/moderate-Auto/"
-        
+        mcfCoverage <- read.table(paste(dir,"mcf.txt",sep=""), sep="\t", row.names=NULL, header = TRUE)
         
     }
     if ( data[2] == "0"){
+        
         print("Simple Setting Plot")
-        coverageAvg <- read.table(paste(dir,"simple-Auto/evalAvg.txt",sep=""), sep="\t", row.names=NULL, header = TRUE)
+        dir <- paste(wdir,"/simple-Auto/",sep="");
+        print(dir);
         
-        mcfCoverage <- read.table(paste(dir,"simple-Auto/mcf.txt",sep=""), sep="\t", row.names=NULL, header = TRUE)
+        coverageAvg <- read.table(paste(dir,"evalAvg.txt",sep=""), sep="\t", row.names=NULL, header = TRUE)
         
-        #dir <- "/cbcb/project-scratch/fdorri/Code/methylFlow/testing/coverage/simple-Auto/"
-        dir <- "/Users/faezeh/Desktop/project/methylFlow_analyses/coverage/simple-Auto/"
+        mcfCoverage <- read.table(paste(dir,"mcf.txt",sep=""), sep="\t", row.names=NULL, header = TRUE)
+        
         
         
     }
@@ -62,34 +67,37 @@ if (data[1] == "0"){
 
 if (data[1] == "1"){
 if ( data[2] == "2"){
+    
     print("Hard Setting Plot")
-    coverageAvg <- read.table(paste(dir,"hard/evalAvg.txt",sep=""), sep="\t", row.names=NULL, header = TRUE)
+    dir <- paste(wdir,"/hard/",sep="");
+    print(dir);
+    coverageAvg <- read.table(paste(dir,"evalAvg.txt",sep=""), sep="\t", row.names=NULL, header = TRUE)
     
-    mcfCoverage <- read.table(paste(dir,"hard/mcf.txt",sep=""), sep="\t", row.names=NULL, header = TRUE)
+    mcfCoverage <- read.table(paste(dir,"mcf.txt",sep=""), sep="\t", row.names=NULL, header = TRUE)
     
-    #dir <- "/cbcb/project-scratch/fdorri/Code/methylFlow/testing/coverage/hard/"
-    dir <- "/Users/faezeh/Desktop/project/methylFlow_analyses/coverage/hard/"
+
 }
 
 if ( data[2] == "1"){
+    
     print("Moderate Setting Plot")
-    coverageAvg <- read.table(paste(dir,"moderate/evalAvg.txt",sep=""), sep="\t", row.names=NULL, header = TRUE)
+    dir <- paste(wdir,"/moderate/",sep="");
+    print(dir);
+    coverageAvg <- read.table(paste(dir,"evalAvg.txt",sep=""), sep="\t", row.names=NULL, header = TRUE)
     
-    mcfCoverage <- read.table(paste(dir,"moderate/mcf.txt",sep=""), sep="\t", row.names=NULL, header = TRUE)
-    
-    #dir <- "/cbcb/project-scratch/fdorri/Code/methylFlow/testing/coverage/moderate/"
-    dir <- "/Users/faezeh/Desktop/project/methylFlow_analyses/coverage/moderate/"
+    mcfCoverage <- read.table(paste(dir,"mcf.txt",sep=""), sep="\t", row.names=NULL, header = TRUE)
     
 }
 if ( data[2] == "0"){
+    
     print("Simple Setting Plot")
-    coverageAvg <- read.table(paste(dir,"simple/evalAvg.txt",sep=""), sep="\t", row.names=NULL, header = TRUE)
+    dir <- paste(wdir,"/simple/",sep="");
+    print(dir);
+    coverageAvg <- read.table(paste(dir,"evalAvg.txt",sep=""), sep="\t", row.names=NULL, header = TRUE)
     
-    mcfCoverage <- read.table(paste(dir,"simple/mcf.txt",sep=""), sep="\t", row.names=NULL, header = TRUE)
+    mcfCoverage <- read.table(paste(dir,"mcf.txt",sep=""), sep="\t", row.names=NULL, header = TRUE)
     
-    #dir <- "/cbcb/project-scratch/fdorri/Code/methylFlow/testing/coverage/simple/"
-    dir <- "/Users/faezeh/Desktop/project/methylFlow_analyses/coverage/simple/"
-    
+
 }
 }
 
