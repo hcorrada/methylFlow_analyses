@@ -21,6 +21,15 @@
 # freqFlag = 1 >>> read the frequency of patterns from rest of the file(second line)
 
 
+pwd=$(pwd)
+echo $pwd
+
+mf="${MF_INSTALL_DIR}/bin/methylFlow"
+mfSimulate="${MF_INSTALL_DIR}/bin/mfSimulate"
+mfEvaluate="${MF_INSTALL_DIR}/bin/mfEvaluation"
+avgEvaluate="${MF_INSTALL_DIR}/bin/avgEvaluation"
+
+
 
 ####### run with auto lambda ###############################################################
 
@@ -33,65 +42,69 @@ then
 
 echo "Hard Setting"
 
-cd /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/hard-Auto/
+dir="${pwd}/hard-Auto"
+cd ${dir}
 
+printf "" > evalAvg.txt
+echo var'\t'threshold'\t'abdncError'\t'methylCallError'\t'TP'\t'FN'\t'FP >> evalAvg.txt
 
-echo -n "" > evalAvg.txt
-echo -e var'\t'threshold'\t'abdncError'\t'methylCallError'\t'TP'\t'FN'\t'FP >> evalAvg.txt
+printf "" > mcf.txt
+echo var'\t'minCostFlow >> mcf.txt
 
-echo -n "" > mcf.txt
-echo -e var'\t'minCostFlow >> mcf.txt
+printf "" > weight.txt
+printf "" > match.txt
+printf "" > matchApp.txt
 
-echo -n "" > weight.txt
-echo -n "" > match.txt
-echo -n "" > matchApp.txt
 
 #echo "var"  "u"   "v"    "weight "  >> weight.txt
 
 
 for i in $(seq 30 2 120)
 do
-echo -n "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/hard-Auto/eval.txt
-echo -e threshold'\t'abdncError'\t'methylCallError'\t'TP'\t'FN'\t'FP >> /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/hard-Auto/eval.txt
+printf "" > ${dir}/eval.txt
+echo threshold  abdncError  methylCallError TP  FN  FP >> ${dir}/eval.txt
+printf "" > ${dir}/input.txt
 
-echo -n "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/hard-Auto/input.txt
-echo 1 757121 230 70 10 1 20 0 $i 10  >> /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/hard-Auto/input.txt
-echo 10 10 10 10 10 10 10 10 10 10 >> /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/hard-Auto/input.txt
+echo 1 757121 230 70 10 1 20 0 $i 10  >> ${dir}/input.txt
+echo 10 10 10 10 10 10 10 10 10 10 >> ${dir}/input.txt
 #echo $i >> evalCpG.txt
 #echo -n "   " >> evalCpG.txt
 echo $i
 for j in {1..100}
 do
 
-echo -n "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/hard-Auto/shortRead.txt
-echo -n "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/hard-Auto/simPattern.txt
-echo -n "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/hard-Auto/patterns.tsv
-echo -n "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/hard-Auto/weight.txt
-echo -n "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/hard-Auto/match.txt
-
+printf "" > ${dir}/shortRead.txt
+printf "" > ${dir}/simPattern.txt
+printf "" > ${dir}/patterns.tsv
+printf "" > ${dir}/weight.txt
+printf "" > ${dir}/match.txt
 
 #change directory to /cbcb/project-scratch/fdorri/Code/methylFlow/testing/
-cd /cbcb/project-scratch/fdorri/Code/methylFlow/testing/
+#cd /cbcb/project-scratch/fdorri/Code/methylFlow/testing/
 
 
 echo "SimulateCpG"
 
-../build/simulator/mfSimulate /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/hard-Auto/input.txt /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/hard-Auto
-
+#../build/simulator/mfSimulate /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/hard-Auto/input.txt /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/hard-Auto
+${mfSimulate} ${dir}/input.txt ${dir}
 
 echo "MethylFlowCpG"
-../build/methylFlow/methylFlow -i /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/hard-Auto/shortRead.txt -o /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/hard-Auto/  -s 1 -chr 1
+#../build/methylFlow/methylFlow -i /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/hard-Auto/shortRead.txt -o /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/hard-Auto/  -s 1 -chr 1
+${mf} -i ${dir}/shortRead.txt -o ${dir} -l 1 -s 1 -chr 1
 
 
 echo "EvaluateCpG"
-../build/evaluation/mfEvaluation /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/hard-Auto /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/hard-Auto 757121 757353 $i
+#../build/evaluation/mfEvaluation /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/hard-Auto /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/hard-Auto 757121 757353 $i
+${mfEvaluate} ${dir} ${dir} 757121 757353 $i
 
 
 done
 #sed -e "s/$/$i/" eval.txt
 echo "avgEval Start"
+#../build/avgEval/avgEvaluation /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/hard-Auto /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/hard-Auto $i
+${avgEvaluate} ${dir} ${dir} $i
 
-../build/avgEval/avgEvaluation /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/hard-Auto /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/hard-Auto $i
+
 echo "avgCpGEval end"
 
 done
@@ -102,18 +115,18 @@ then
 
 echo "Moderate Setting"
 
-cd /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/moderate-Auto/
+dir="${pwd}/moderate-Auto"
+cd ${dir}
 
+printf "" > evalAvg.txt
+echo var'\t'threshold'\t'abdncError'\t'methylCallError'\t'TP'\t'FN'\t'FP >> evalAvg.txt
 
-echo -n "" > evalAvg.txt
-echo -e var'\t'threshold'\t'abdncError'\t'methylCallError'\t'TP'\t'FN'\t'FP >> evalAvg.txt
+printf "" > mcf.txt
+echo var'\t'minCostFlow >> mcf.txt
 
-echo -n "" > mcf.txt
-echo -e var'\t'minCostFlow >> mcf.txt
-
-echo -n "" > weight.txt
-echo -n "" > match.txt
-echo -n "" > matchApp.txt
+printf "" > weight.txt
+printf "" > match.txt
+printf "" > matchApp.txt
 
 
 #echo "var"  "u"   "v"    "weight "  >> weight.txt
@@ -121,48 +134,46 @@ echo -n "" > matchApp.txt
 
 for i in $(seq 30 2 120)
 do
-echo -n "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/moderate-Auto/eval.txt
-echo -e threshold'\t'abdncError'\t'methylCallError'\t'TP'\t'FN'\t'FP >> /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/moderate-Auto/eval.txt
+printf "" > ${dir}/eval.txt
+echo threshold  abdncError  methylCallError TP  FN  FP >> ${dir}/eval.txt
+printf "" > ${dir}/input.txt
 
-echo -n "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/moderate-Auto/input.txt
-echo 1 757121 230 70 4 1 20 0 $i 10  >> /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/moderate-Auto/input.txt
-echo 15 15 35 35 >> /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/moderate-Auto/input.txt
+echo 1 757121 230 70 10 1 20 0 $i 10  >> ${dir}/input.txt
+echo 10 10 10 10 10 10 10 10 10 10 >> ${dir}/input.txt
 #echo $i >> evalCpG.txt
 #echo -n "   " >> evalCpG.txt
 echo $i
 for j in {1..100}
 do
 
-echo -n "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/moderate-Auto/shortRead.txt
-echo -n "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/moderate-Auto/simPattern.txt
-echo -n "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/moderate-Auto/patterns.tsv
-echo -n "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/moderate-Auto/weight.txt
-echo -n "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/moderate-Auto/match.txt
+printf "" > ${dir}/shortRead.txt
+printf "" > ${dir}/simPattern.txt
+printf "" > ${dir}/patterns.tsv
+printf "" > ${dir}/weight.txt
+printf "" > ${dir}/match.txt
 
 #change directory to /cbcb/project-scratch/fdorri/Code/methylFlow/testing/
-cd /cbcb/project-scratch/fdorri/Code/methylFlow/testing/
+#cd /cbcb/project-scratch/fdorri/Code/methylFlow/testing/
 
 
 echo "SimulateCpG"
-
-../build/simulator/mfSimulate /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/moderate-Auto/input.txt /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/moderate-Auto
-
+${mfSimulate} ${dir}/input.txt ${dir}
 
 echo "MethylFlowCpG"
-../build/methylFlow/methylFlow -i /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/moderate-Auto/shortRead.txt -o /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/moderate-Auto/ -s 1 -chr 1
+${mf} -i ${dir}/shortRead.txt -o ${dir} -l 1 -s 1 -chr 1
 
 
 echo "EvaluateCpG"
-../build/evaluation/mfEvaluation /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/moderate-Auto /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/moderate-Auto 757121 757353 $i
+${mfEvaluate} ${dir} ${dir} 757121 757353 $i
 
 
 done
 #sed -e "s/$/$i/" eval.txt
 echo "avgEval Start"
+${avgEvaluate} ${dir} ${dir} $i
 
-../build/avgEval/avgEvaluation /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/moderate-Auto /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/moderate-Auto $i
+
 echo "avgCpGEval end"
-
 done
 
 
@@ -171,18 +182,18 @@ then
 
 echo "Simple Setting"
 
-cd /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/simple-Auto/
+dir="${pwd}/simple-Auto"
+cd ${dir}
 
+printf "" > evalAvg.txt
+echo var'\t'threshold'\t'abdncError'\t'methylCallError'\t'TP'\t'FN'\t'FP >> evalAvg.txt
 
-echo -n "" > evalAvg.txt
-echo -e var'\t'threshold'\t'abdncError'\t'methylCallError'\t'TP'\t'FN'\t'FP >> evalAvg.txt
+printf "" > mcf.txt
+echo var'\t'minCostFlow >> mcf.txt
 
-echo -n "" > mcf.txt
-echo -e var'\t'minCostFlow >> mcf.txt
-
-echo -n "" > weight.txt
-echo -n "" > match.txt
-echo -n "" > matchApp.txt
+printf "" > weight.txt
+printf "" > match.txt
+printf "" > matchApp.txt
 
 
 #echo "var"  "u"   "v"    "weight "  >> weight.txt
@@ -190,46 +201,43 @@ echo -n "" > matchApp.txt
 
 for i in $(seq 30 2 120)
 do
-echo -n "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/simple-Auto/eval.txt
-echo -e threshold'\t'abdncError'\t'methylCallError'\t'TP'\t'FN'\t'FP >> /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/simple-Auto/eval.txt
+printf "" > ${dir}/eval.txt
+echo threshold  abdncError  methylCallError TP  FN  FP >> ${dir}/eval.txt
+printf "" > ${dir}/input.txt
 
-echo -n "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/simple-Auto/input.txt
-echo 1 757121 230 70 2 1 20 0 $i 10  >> /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/simple-Auto/input.txt
-echo 25 75 >> /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/simple-Auto/input.txt
+echo 1 757121 230 70 10 1 20 0 $i 10  >> ${dir}/input.txt
+echo 10 10 10 10 10 10 10 10 10 10 >> ${dir}/input.txt
 #echo $i >> evalCpG.txt
 #echo -n "   " >> evalCpG.txt
 echo $i
 for j in {1..100}
 do
 
-echo -n "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/simple-Auto/shortRead.txt
-echo -n "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/simple-Auto/simPattern.txt
-echo -n "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/simple-Auto/patterns.tsv
-echo -n "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/simple-Auto/weight.txt
-echo -n "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/simple-Auto/match.txt
+printf "" > ${dir}/shortRead.txt
+printf "" > ${dir}/simPattern.txt
+printf "" > ${dir}/patterns.tsv
+printf "" > ${dir}/weight.txt
+printf "" > ${dir}/match.txt
 
-#change directory to /cbcb/project-scratch/fdorri/Code/methylFlow/testing/
-cd /cbcb/project-scratch/fdorri/Code/methylFlow/testing/
 
 
 echo "SimulateCpG"
-
-../build/simulator/mfSimulate /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/simple-Auto/input.txt /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/simple-Auto
-
+${mfSimulate} ${dir}/input.txt ${dir}
 
 echo "MethylFlowCpG"
-../build/methylFlow/methylFlow -i /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/simple-Auto/shortRead.txt -o /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/simple-Auto/ -s 1 -chr 1
+${mf} -i ${dir}/shortRead.txt -o ${dir} -l 1 -s 1 -chr 1
 
 
 echo "EvaluateCpG"
-../build/evaluation/mfEvaluation /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/simple-Auto /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/simple-Auto 757121 757353 $i
+${mfEvaluate} ${dir} ${dir} 757121 757353 $i
 
 
 done
 #sed -e "s/$/$i/" eval.txt
 echo "avgEval Start"
+${avgEvaluate} ${dir} ${dir} $i
 
-../build/avgEval/avgEvaluation /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/simple-Auto /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/simple-Auto $i
+
 echo "avgCpGEval end"
 
 done
@@ -255,18 +263,18 @@ then
 
 echo "Hard Setting"
 
-cd /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/hard/
+dir="${pwd}/hard"
+cd ${dir}
 
+printf "" > evalAvg.txt
+echo var'\t'threshold'\t'abdncError'\t'methylCallError'\t'TP'\t'FN'\t'FP >> evalAvg.txt
 
-echo -n "" > evalAvg.txt
-echo -e var'\t'threshold'\t'abdncError'\t'methylCallError'\t'TP'\t'FN'\t'FP >> evalAvg.txt
+printf "" > mcf.txt
+echo var'\t'minCostFlow >> mcf.txt
 
-echo -n "" > mcf.txt
-echo -e var'\t'minCostFlow >> mcf.txt
-
-echo -n "" > weight.txt
-echo -n "" > match.txt
-echo -n "" > matchApp.txt
+printf "" > weight.txt
+printf "" > match.txt
+printf "" > matchApp.txt
 
 
 #echo "var"  "u"   "v"    "weight "  >> weight.txt
@@ -274,47 +282,41 @@ echo -n "" > matchApp.txt
 
 for i in $(seq 30 2 120)
 do
-echo -n "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/hard/eval.txt
-echo -e threshold'\t'abdncError'\t'methylCallError'\t'TP'\t'FN'\t'FP >> /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/hard/eval.txt
+printf "" > ${dir}/eval.txt
+echo threshold  abdncError  methylCallError TP  FN  FP >> ${dir}/eval.txt
+printf "" > ${dir}/input.txt
 
-echo -n "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/hard/input.txt
-echo 1 757121 230 70 10 1 20 0 $i 10  >> /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/hard/input.txt
-echo 10 10 10 10 10 10 10 10 10 10 >> /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/hard/input.txt
-#echo $i >> evalCpG.txt
-#echo -n "   " >> evalCpG.txt
+echo 1 757121 230 70 10 1 20 0 $i 10  >> ${dir}/input.txt
+echo 10 10 10 10 10 10 10 10 10 10 >> ${dir}/input.txt
 echo $i
+
 for j in {1..100}
 do
 
-echo -n "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/hard/shortRead.txt
-echo -n "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/hard/simPattern.txt
-echo -n "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/hard/patterns.tsv
-echo -n "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/hard/weight.txt
-echo -n "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/hard/match.txt
-
-
-#change directory to /cbcb/project-scratch/fdorri/Code/methylFlow/testing/
-cd /cbcb/project-scratch/fdorri/Code/methylFlow/testing/
+printf "" > ${dir}/shortRead.txt
+printf "" > ${dir}/simPattern.txt
+printf "" > ${dir}/patterns.tsv
+printf "" > ${dir}/weight.txt
+printf "" > ${dir}/match.txt
 
 
 echo "SimulateCpG"
-
-../build/simulator/mfSimulate /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/hard/input.txt /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/hard
-
+${mfSimulate} ${dir}/input.txt ${dir}
 
 echo "MethylFlowCpG"
-../build/methylFlow/methylFlow -i /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/hard/shortRead.txt -o /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/hard/ -l 1 -s 1 -chr 1
+${mf} -i ${dir}/shortRead.txt -o ${dir} -l 1 -s 1 -chr 1
 
 
 echo "EvaluateCpG"
-../build/evaluation/mfEvaluation /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/hard /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/hard 757121 757353 $i
+${mfEvaluate} ${dir} ${dir} 757121 757353 $i
 
 
 done
 #sed -e "s/$/$i/" eval.txt
 echo "avgEval Start"
+${avgEvaluate} ${dir} ${dir} $i
 
-../build/avgEval/avgEvaluation /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/hard /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/hard $i
+
 echo "avgCpGEval end"
 
 done
@@ -325,18 +327,18 @@ then
 
 echo "Moderate Setting"
 
-cd /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/moderate/
+dir="${pwd}/moderate"
+cd ${dir}
 
+printf "" > evalAvg.txt
+echo var'\t'threshold'\t'abdncError'\t'methylCallError'\t'TP'\t'FN'\t'FP >> evalAvg.txt
 
-echo -n "" > evalAvg.txt
-echo -e var'\t'threshold'\t'abdncError'\t'methylCallError'\t'TP'\t'FN'\t'FP >> evalAvg.txt
+printf "" > mcf.txt
+echo var'\t'minCostFlow >> mcf.txt
 
-echo -n "" > mcf.txt
-echo -e var'\t'minCostFlow >> mcf.txt
-
-echo -n "" > weight.txt
-echo -n "" > match.txt
-echo -n "" > matchApp.txt
+printf "" > weight.txt
+printf "" > match.txt
+printf "" > matchApp.txt
 
 
 #echo "var"  "u"   "v"    "weight "  >> weight.txt
@@ -344,46 +346,45 @@ echo -n "" > matchApp.txt
 
 for i in $(seq 30 2 120)
 do
-echo -n "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/moderate/eval.txt
-echo -e threshold'\t'abdncError'\t'methylCallError'\t'TP'\t'FN'\t'FP >> /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/moderate/eval.txt
+printf "" > ${dir}/eval.txt
+echo threshold  abdncError  methylCallError TP  FN  FP >> ${dir}/eval.txt
+printf "" > ${dir}/input.txt
 
-echo -n "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/moderate/input.txt
-echo 1 757121 230 70 4 1 20 0 $i 10  >> /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/moderate/input.txt
-echo 15 15 35 35 >> /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/moderate/input.txt
+echo 1 757121 230 70 4 1 20 0 $i 10  >> ${dir}/input.txt
+echo 15 15 35 35 >> ${dir}/input.txt
 #echo $i >> evalCpG.txt
 #echo -n "   " >> evalCpG.txt
 echo $i
 for j in {1..100}
 do
 
-echo -n "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/moderate/shortRead.txt
-echo -n "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/moderate/simPattern.txt
-echo -n "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/moderate/patterns.tsv
-echo -n "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/moderate/weight.txt
-echo -n "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/moderate/match.txt
+printf "" > ${dir}/shortRead.txt
+printf "" > ${dir}/simPattern.txt
+printf "" > ${dir}/patterns.tsv
+printf "" > ${dir}/weight.txt
+printf "" > ${dir}/match.txt
 
 #change directory to /cbcb/project-scratch/fdorri/Code/methylFlow/testing/
-cd /cbcb/project-scratch/fdorri/Code/methylFlow/testing/
+#cd /cbcb/project-scratch/fdorri/Code/methylFlow/testing/
 
 
 echo "SimulateCpG"
-
-../build/simulator/mfSimulate /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/moderate/input.txt /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/moderate
-
+${mfSimulate} ${dir}/input.txt ${dir}
 
 echo "MethylFlowCpG"
-../build/methylFlow/methylFlow -i /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/moderate/shortRead.txt -o /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/moderate/ -l 1 -s 1 -chr 1
+${mf} -i ${dir}/shortRead.txt -o ${dir} -l 1 -s 1 -chr 1
 
 
 echo "EvaluateCpG"
-../build/evaluation/mfEvaluation /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/moderate /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/moderate 757121 757353 $i
+${mfEvaluate} ${dir} ${dir} 757121 757353 $i
 
 
 done
 #sed -e "s/$/$i/" eval.txt
 echo "avgEval Start"
+${avgEvaluate} ${dir} ${dir} $i
 
-../build/avgEval/avgEvaluation /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/moderate /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/moderate $i
+
 echo "avgCpGEval end"
 
 done
@@ -394,18 +395,18 @@ then
 
 echo "Simple Setting"
 
-cd /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/simple/
+dir="${pwd}/simple"
+cd ${dir}
 
+printf "" > evalAvg.txt
+echo var'\t'threshold'\t'abdncError'\t'methylCallError'\t'TP'\t'FN'\t'FP >> evalAvg.txt
 
-echo -n "" > evalAvg.txt
-echo -e var'\t'threshold'\t'abdncError'\t'methylCallError'\t'TP'\t'FN'\t'FP >> evalAvg.txt
+printf "" > mcf.txt
+echo var'\t'minCostFlow >> mcf.txt
 
-echo -n "" > mcf.txt
-echo -e var'\t'minCostFlow >> mcf.txt
-
-echo -n "" > weight.txt
-echo -n "" > match.txt
-echo -n "" > matchApp.txt
+printf "" > weight.txt
+printf "" > match.txt
+printf "" > matchApp.txt
 
 
 #echo "var"  "u"   "v"    "weight "  >> weight.txt
@@ -413,46 +414,42 @@ echo -n "" > matchApp.txt
 
 for i in $(seq 30 2 120)
 do
-echo -n "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/simple/eval.txt
-echo -e threshold'\t'abdncError'\t'methylCallError'\t'TP'\t'FN'\t'FP >> /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/simple/eval.txt
+printf "" > ${dir}/eval.txt
+echo threshold  abdncError  methylCallError TP  FN  FP >> ${dir}/eval.txt
+printf "" > ${dir}/input.txt
 
-echo -n "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/simple/input.txt
-echo 1 757121 230 70 2 1 20 0 $i 10  >> /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/simple/input.txt
-echo 25 75 >> /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/simple/input.txt
+echo 1 757121 230 70 2 1 20 0 $i 10  >> ${dir}/input.txt
+echo 25 75 >> ${dir}/input.txt
 #echo $i >> evalCpG.txt
 #echo -n "   " >> evalCpG.txt
 echo $i
 for j in {1..100}
 do
 
-echo -n "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/simple/shortRead.txt
-echo -n "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/simple/simPattern.txt
-echo -n "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/simple/patterns.tsv
-echo -n "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/simple/weight.txt
-echo -n "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/simple/match.txt
-
-#change directory to /cbcb/project-scratch/fdorri/Code/methylFlow/testing/
-cd /cbcb/project-scratch/fdorri/Code/methylFlow/testing/
+printf "" > ${dir}/shortRead.txt
+printf "" > ${dir}/simPattern.txt
+printf "" > ${dir}/patterns.tsv
+printf "" > ${dir}/weight.txt
+printf "" > ${dir}/match.txt
 
 
 echo "SimulateCpG"
-
-../build/simulator/mfSimulate /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/simple/input.txt /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/simple
-
+${mfSimulate} ${dir}/input.txt ${dir}
 
 echo "MethylFlowCpG"
-../build/methylFlow/methylFlow -i /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/simple/shortRead.txt -o /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/simple/ -l 1 -s 1 -chr 1
+${mf} -i ${dir}/shortRead.txt -o ${dir} -l 1 -s 1 -chr 1
 
 
 echo "EvaluateCpG"
-../build/evaluation/mfEvaluation /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/simple /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/simple 757121 757353 $i
+${mfEvaluate} ${dir} ${dir} 757121 757353 $i
 
 
 done
 #sed -e "s/$/$i/" eval.txt
 echo "avgEval Start"
+${avgEvaluate} ${dir} ${dir} $i
 
-../build/avgEval/avgEvaluation /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/simple /cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/simple $i
+
 echo "avgCpGEval end"
 
 done

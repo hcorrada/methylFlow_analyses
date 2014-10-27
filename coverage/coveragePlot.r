@@ -20,6 +20,8 @@ count = (end - start) / step + 1
 
 data <- commandArgs(T)
 print(data)
+#dir <- "/Users/faezeh/Desktop/project/methylFlow_analyses/cpg/"
+
 #dir <- "/cbcb/project-scratch/fdorri/Code/methylFlow/testing/coverage/"
 #dir <- "/Users/faezeh/Desktop/project/methylFlow_analyses/coverage/"
 wdir <- getwd();

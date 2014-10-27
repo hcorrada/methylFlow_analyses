@@ -46,10 +46,10 @@ cd ${dir}
 #cd /cbcb/project-scratch/fdorri/Code/methylFlow/testing/coverage/hard/
 ########  evaluation for different coverages ########
 printf "" > evalAvg.txt
-printf var'\t'threshold'\t'abdncError'\t'methylCallError'\t'TP'\t'FN'\t'FP >> evalAvg.txt
+echo var'\t'threshold'\t'abdncError'\t'methylCallError'\t'TP'\t'FN'\t'FP >> evalAvg.txt
 
 printf "" > mcf.txt
-printf var'\t'minCostFlow >> mcf.txt
+echo var'\t'minCostFlow >> mcf.txt
 
 printf "" > weight.txt
 printf "" > match.txt
@@ -131,10 +131,10 @@ cd ${dir}
 ########  evaluation for different coverages ########
 
 printf "" > evalAvg.txt
-printf var'\t'threshold'\t'abdncError'\t'methylCallError'\t'TP'\t'FN'\t'FP >> evalAvg.txt
+echo var'\t'threshold'\t'abdncError'\t'methylCallError'\t'TP'\t'FN'\t'FP >> evalAvg.txt
 
 printf "" > mcf.txt
-printf var'\t'minCostFlow >> mcf.txt
+echo var'\t'minCostFlow >> mcf.txt
 
 printf "" > weight.txt
 printf "" > match.txt
@@ -196,10 +196,10 @@ cd ${dir}
 ########  evaluation for different coverages ########
 
 printf "" > evalAvg.txt
-printf var'\t'threshold'\t'abdncError'\t'methylCallError'\t'TP'\t'FN'\t'FP >> evalAvg.txt
+echo var'\t'threshold'\t'abdncError'\t'methylCallError'\t'TP'\t'FN'\t'FP >> evalAvg.txt
 
 printf "" > mcf.txt
-printf var'\t'minCostFlow >> mcf.txt
+echo var'\t'minCostFlow >> mcf.txt
 
 printf "" > weight.txt
 printf "" > match.txt
@@ -267,10 +267,10 @@ cd ${dir}
 ########  evaluation for different coverages ########
 
 printf "" > evalAvg.txt
-printf var'\t'threshold'\t'abdncError'\t'methylCallError'\t'TP'\t'FN'\t'FP >> evalAvg.txt
+echo var'\t'threshold'\t'abdncError'\t'methylCallError'\t'TP'\t'FN'\t'FP >> evalAvg.txt
 
 printf "" > mcf.txt
-printf var'\t'minCostFlow >> mcf.txt
+echo var'\t'minCostFlow >> mcf.txt
 
 printf "" > weight.txt
 printf "" > match.txt
@@ -328,10 +328,10 @@ cd ${dir}
 ########  evaluation for different coverages ########
 
 printf "" > evalAvg.txt
-printf var'\t'threshold'\t'abdncError'\t'methylCallError'\t'TP'\t'FN'\t'FP >> evalAvg.txt
+echo var'\t'threshold'\t'abdncError'\t'methylCallError'\t'TP'\t'FN'\t'FP >> evalAvg.txt
 
 printf "" > mcf.txt
-printf var'\t'minCostFlow >> mcf.txt
+echo var'\t'minCostFlow >> mcf.txt
 
 printf "" > weight.txt
 printf "" > match.txt
