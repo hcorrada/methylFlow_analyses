@@ -1,4 +1,3 @@
-
 #!/usr/bin/env Rscript
 
 ### run ./readLengthPlot.r par1 par2
@@ -9,6 +8,8 @@
 ### par2 = 0 > simple
 ### par2 = 1 > moderate
 ### par2 = 2 > Hard
+
+library("RColorBrewer")
 
 
 start= 0.1
@@ -21,75 +22,76 @@ count = (end - start) / step + 1
 data <- commandArgs(T)
 print(data)
 #dir <- "/cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/"
-dir <- "/Users/faezeh/Desktop/project/methylFlow_analyses/readLength/"
-data[1]= 0
-data[2] = 2
+
+
+wdir <- getwd();
+print(wdir)
 ##### reading files ##################
 if (data[1] == "0"){
   if ( data[2] == "2"){
     print("Hard Setting Plot")
-    readLengthAvg <- read.table(paste(dir,"hard-Auto/evalAvg.txt",sep=""), sep="\t", row.names=NULL, header = TRUE)
+    dir <- paste(wdir,"/hard-Auto/",sep="");
+
+    readLengthAvg <- read.table(paste(dir,"evalAvg.txt",sep=""), sep="\t", row.names=NULL, header = TRUE)
     
-    mcfReadLength <- read.table(paste(dir,"hard-Auto/mcf.txt",sep=""), sep="\t", row.names=NULL, header = TRUE)
+    mcfReadLength <- read.table(paste(dir,"mcf.txt",sep=""), sep="\t", row.names=NULL, header = TRUE)
     
     #dir <- "/cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/hard-Auto/"
-    dir <- "/Users/faezeh/Desktop/project/methylFlow_analyses/readLength/hard-Auto/"
     
   }
   
   if ( data[2] == "1"){
     print("Moderate Setting Plot")
-    readLengthAvg <- read.table(paste(dir,"moderate-Auto/evalAvg.txt",sep=""), sep="\t", row.names=NULL, header = TRUE)
+    dir <- paste(wdir,"/moderate-Auto/",sep="");
     
-    mcfReadLength <- read.table(paste(dir,"moderate-Auto/mcf.txt",sep=""), sep="\t", row.names=NULL, header = TRUE)
+    readLengthAvg <- read.table(paste(dir,"evalAvg.txt",sep=""), sep="\t", row.names=NULL, header = TRUE)
     
-    #dir <- "/cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/moderate-Auto/"
-    dir <- "/Users/faezeh/Desktop/project/methylFlow_analyses/readLength/moderate-Auto/"
+    mcfReadLength <- read.table(paste(dir,"mcf.txt",sep=""), sep="\t", row.names=NULL, header = TRUE)
     
     
   }
+  
+  
   if ( data[2] == "0"){
     print("Simple Setting Plot")
-    readLengthAvg <- read.table(paste(dir,"simple-Auto/evalAvg.txt",sep=""), sep="\t", row.names=NULL, header = TRUE)
+    dir <- paste(wdir,"/simple-Auto/",sep="");
     
-    mcfReadLength <- read.table(paste(dir,"simple-Auto/mcf.txt",sep=""), sep="\t", row.names=NULL, header = TRUE)
+    readLengthAvg <- read.table(paste(dir,"evalAvg.txt",sep=""), sep="\t", row.names=NULL, header = TRUE)
     
-    #dir <- "/cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/simple-Auto/"
-    dir <- "/Users/faezeh/Desktop/project/methylFlow_analyses/readLength/simple-Auto/"
-    
-    
+    mcfReadLength <- read.table(paste(dir,"mcf.txt",sep=""), sep="\t", row.names=NULL, header = TRUE)
   }
 }
+
+
+
 
 if (data[1] == "1"){
   if ( data[2] == "2"){
     print("Hard Setting Plot")
-    readLengthAvg <- read.table(paste(dir,"hard/evalAvg.txt",sep=""), sep="\t", row.names=NULL, header = TRUE)
+    dir <- paste(wdir,"/hard/",sep="");
     
-    mcfReadLength <- read.table(paste(dir,"hard/mcf.txt",sep=""), sep="\t", row.names=NULL, header = TRUE)
+    readLengthAvg <- read.table(paste(dir,"evalAvg.txt",sep=""), sep="\t", row.names=NULL, header = TRUE)
     
-    #dir <- "/cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/hard/"
-    dir <- "/Users/faezeh/Desktop/project/methylFlow_analyses/readLength/hard/"
+      mcfReadLength <- read.table(paste(dir,"mcf.txt",sep=""), sep="\t", row.names=NULL, header = TRUE)
+  
   }
   
   if ( data[2] == "1"){
     print("Moderate Setting Plot")
-    readLengthAvg <- read.table(paste(dir,"moderate/evalAvg.txt",sep=""), sep="\t", row.names=NULL, header = TRUE)
+    dir <- paste(wdir,"/moderate/",sep="");
     
-    mcfReadLength <- read.table(paste(dir,"moderate/mcf.txt",sep=""), sep="\t", row.names=NULL, header = TRUE)
+    readLengthAvg <- read.table(paste(dir,"evalAvg.txt",sep=""), sep="\t", row.names=NULL, header = TRUE)
     
-    #dir <- "/cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/moderate/"
-    dir <- "/Users/faezeh/Desktop/project/methylFlow_analyses/readLength/moderate/"
+    mcfReadLength <- read.table(paste(dir,"mcf.txt",sep=""), sep="\t", row.names=NULL, header = TRUE)
     
   }
   if ( data[2] == "0"){
     print("Simple Setting Plot")
-    readLengthAvg <- read.table(paste(dir,"simple/evalAvg.txt",sep=""), sep="\t", row.names=NULL, header = TRUE)
+    dir <- paste(wdir,"/simple/",sep="");
     
-    mcfReadLength <- read.table(paste(dir,"simple/mcf.txt",sep=""), sep="\t", row.names=NULL, header = TRUE)
+    readLengthAvg <- read.table(paste(dir,"evalAvg.txt",sep=""), sep="\t", row.names=NULL, header = TRUE)
     
-    #dir <- "/cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/simple/"
-    dir <- "/Users/faezeh/Desktop/project/methylFlow_analyses/readLength/simple/"
+    mcfReadLength <- read.table(paste(dir,"mcf.txt",sep=""), sep="\t", row.names=NULL, header = TRUE)
     
   }
 }
@@ -531,7 +533,7 @@ print("plot min cost flow error vs readLength")
 pdf(paste(dir,"mcfreadLength.pdf",sep=""))
 par(mar= c(5,5,2,2))
 
-agg = aggregate(mcfreadLength$minCostFlow, list(readLength = mcfreadLength$var), FUN =  mean)
+agg = aggregate(mcfReadLength$minCostFlow, list(readLength = mcfReadLength$var), FUN =  mean)
 
 plot(agg, ylab="Min Cost Flow Error", cex.lab = 2, cex.axis = 1.5, pch = 19, col= "blue")
 

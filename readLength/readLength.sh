@@ -20,6 +20,13 @@
 # freqFlag = 0 >>> randomly choose the frequency of each pattern
 # freqFlag = 1 >>> read the frequency of patterns from rest of the file(second line)
 
+pwd=$(pwd)
+echo $pwd
+
+mf="${MF_INSTALL_DIR}/bin/methylFlow"
+mfSimulate="${MF_INSTALL_DIR}/bin/mfSimulate"
+mfEvaluate="${MF_INSTALL_DIR}/bin/mfEvaluation"
+avgEvaluate="${MF_INSTALL_DIR}/bin/avgEvaluation"
 
 if [ "$1" == 0 ];
 then
@@ -29,30 +36,32 @@ then
 
 
 echo "Hard Setting"
-
-cd /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/hard-Auto/
-
-
-########  evaluation for different read lengthes ########
-
-echo -n "" > evalAvg.txt
-echo -e var'\t'threshold'\t'abdncError'\t'methylCallError'\t'TP'\t'FN'\t'FP >> evalAvg.txt
-
-echo -n "" > mcf.txt
-echo -e var'\t'minCostFlow >> mcf.txt
-echo -n "" > weight.txt
-echo -n "" > match.txt
-echo -n "" > matchApp.txt
+dir="${pwd}/hard-Auto"
 
 
-for i in $(seq 50 5 230)
+cd ${dir}
+########  evaluation for different coverages ########
+
+printf "" > evalAvg.txt
+echo var'\t'threshold'\t'abdncError'\t'methylCallError'\t'TP'\t'FN'\t'FP >> evalAvg.txt
+
+printf "" > mcf.txt
+echo var'\t'minCostFlow >> mcf.txt
+
+printf "" > weight.txt
+printf "" > match.txt
+printf "" > matchApp.txt
+
+
+for i in $(seq 5 3 200)
 do
-echo -n "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/hard-Auto/eval.txt
-echo -e threshold'\t'abdncError'\t'methylCallError'\t'TP'\t'FN'\t'FP >> /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/hard-Auto/eval.txt
 
-echo -n "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/hard-Auto/input.txt
-echo 1 757121 230 $i 10 1 20 0 80 10 >> /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/hard-Auto/input.txt
-echo 10 10 10 10 10 10 10 10 10 10 >> /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/hard-Auto/input.txt
+printf "" > ${dir}/eval.txt
+echo threshold  abdncError  methylCallError TP  FN  FP >> ${dir}/eval.txt
+printf "" > ${dir}/input.txt
+
+echo 1 757121 230 $i 10 1 20 0 80 10 >> ${dir}/input.txt
+echo 10 10 10 10 10 10 10 10 10 10 >> ${dir}/input.txt
 #echo $i >> evalReadLength.txt
 #echo -n "   " >> evalReadLength.txt
 
@@ -63,65 +72,63 @@ echo $i
 for j in {1..100}
 do
 
-echo -n "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/hard-Auto/shortRead.txt
-echo -n "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/hard-Auto/simPattern.txt
-echo -n "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/hard-Auto/patterns.tsv
-echo -n "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/hard-Auto/weight.txt
-echo -n "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/hard-Auto/match.txt
-
-
-#change directory to  /cbcb/project-scratch/fdorri/Code/methylFlow/testing/
-cd /cbcb/project-scratch/fdorri/Code/methylFlow/testing/
+printf "" > ${dir}/shortRead.txt
+printf "" > ${dir}/simPattern.txt
+printf "" > ${dir}/patterns.tsv
+printf "" > ${dir}/weight.txt
+printf "" > ${dir}/match.txt
 
 
 
-echo "SimulateReadLength"
-../build/simulator/mfSimulate /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/hard-Auto/input.txt  /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/hard-Auto
+echo "SimulateCoverage"
+${mfSimulate} ${dir}/input.txt ${dir}
 
+echo "MethylFlowCoverage"
+${mf} -i ${dir}/shortRead.txt -o ${dir} -s 1 -chr 1
 
-echo "MethylFlowReadLength"
-../build/methylFlow/methylFlow -i /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/hard-Auto/shortRead.txt -o /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/hard-Auto/ -s 1 -chr 1
-
-
-echo "EvaluateReadLength"
-../build/evaluation/mfEvaluation /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/hard-Auto /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/hard-Auto 757121 757353 $i
+echo "EvaluateCoverage"
+${mfEvaluate} ${dir} ${dir} 757121 757353 $i
 
 done
-
-../build/avgEval/avgEvaluation /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/hard-Auto /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/hard-Auto $i
+echo "avgEval Start"
+${avgEvaluate} ${dir} ${dir} $i
 
 #sed -e "s/$/$i/" eval.txt
-
+echo "avgEval end"
 done
+
 
 elif [ "$2" == 1 ];
 then
 
 
 echo "Moderate Setting"
-
-cd /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/moderate-Auto/
-
-########  evaluation for different read lengthes ########
-
-echo -n "" > evalAvg.txt
-echo -e var'\t'threshold'\t'abdncError'\t'methylCallError'\t'TP'\t'FN'\t'FP >> evalAvg.txt
-
-echo -n "" > mcf.txt
-echo -e var'\t'minCostFlow >> mcf.txt
-echo -n "" > weight.txt
-echo -n "" > match.txt
-echo -n "" > matchApp.txt
+dir="${pwd}/moderate-Auto"
 
 
-for i in $(seq 50 5 230)
+cd ${dir}
+########  evaluation for different coverages ########
+
+printf "" > evalAvg.txt
+echo var'\t'threshold'\t'abdncError'\t'methylCallError'\t'TP'\t'FN'\t'FP >> evalAvg.txt
+
+printf "" > mcf.txt
+echo var'\t'minCostFlow >> mcf.txt
+
+printf "" > weight.txt
+printf "" > match.txt
+printf "" > matchApp.txt
+
+
+for i in $(seq 5 3 200)
 do
-echo -n "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/moderate-Auto/eval.txt
-echo -e threshold'\t'abdncError'\t'methylCallError'\t'TP'\t'FN'\t'FP >> /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/moderate-Auto/eval.txt
 
-echo -n "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/moderate-Auto/input.txt
-echo 1 757121 230 $i 4 1 20 0 80 10 >> /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/moderate-Auto/input.txt
-echo 15 15 35 35 >> /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/moderate-Auto/input.txt
+printf "" > ${dir}/eval.txt
+echo threshold  abdncError  methylCallError TP  FN  FP >> ${dir}/eval.txt
+printf "" > ${dir}/input.txt
+
+echo 1 757121 230 $i 4 1 20 0 80 10 >> ${dir}/input.txt
+echo 15 15 35 35 >> ${dir}/input.txt
 #echo $i >> evalReadLength.txt
 #echo -n "   " >> evalReadLength.txt
 
@@ -132,36 +139,34 @@ echo $i
 for j in {1..100}
 do
 
-echo -n "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/moderate-Auto/shortRead.txt
-echo -n "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/moderate-Auto/simPattern.txt
-echo -n "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/moderate-Auto/patterns.tsv
-echo -n "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/moderate-Auto/weight.txt
-echo -n "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/moderate-Auto/match.txt
-
-
-#change directory to  /cbcb/project-scratch/fdorri/Code/methylFlow/testing/
-cd /cbcb/project-scratch/fdorri/Code/methylFlow/testing/
+printf "" > ${dir}/shortRead.txt
+printf "" > ${dir}/simPattern.txt
+printf "" > ${dir}/patterns.tsv
+printf "" > ${dir}/weight.txt
+printf "" > ${dir}/match.txt
 
 
 
-echo "SimulateReadLength"
-../build/simulator/mfSimulate /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/moderate-Auto/input.txt /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/moderate-Auto
+echo "SimulateCoverage"
+${mfSimulate} ${dir}/input.txt ${dir}
 
+echo "MethylFlowCoverage"
+${mf} -i ${dir}/shortRead.txt -o ${dir} -s 1 -chr 1
 
-echo "MethylFlowReadLength"
-../build/methylFlow/methylFlow -i /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/moderate-Auto/shortRead.txt -o /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/moderate-Auto/ -s 1 -chr 1
-
-
-echo "EvaluateReadLength"
-../build/evaluation/mfEvaluation /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/moderate-Auto /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/moderate-Auto 757120 757360 $i
+echo "EvaluateCoverage"
+${mfEvaluate} ${dir} ${dir} 757121 757353 $i
 
 done
-
-../build/avgEval/avgEvaluation /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/moderate-Auto /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/moderate-Auto $i
+echo "avgEval Start"
+${avgEvaluate} ${dir} ${dir} $i
 
 #sed -e "s/$/$i/" eval.txt
-
+echo "avgEval end"
 done
+
+
+
+
 
 elif [ "$2" == 0 ];
 then
@@ -169,28 +174,32 @@ then
 
 echo "Simple Setting"
 
-cd /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/simple-Auto/
-
-########  evaluation for different read lengthes ########
-
-echo -n "" > evalAvg.txt
-echo -e var'\t'threshold'\t'abdncError'\t'methylCallError'\t'TP'\t'FN'\t'FP >> evalAvg.txt
-
-echo -n "" > mcf.txt
-echo -e var'\t'minCostFlow >> mcf.txt
-echo -n "" > weight.txt
-echo -n "" > match.txt
-echo -n "" > matchApp.txt
+dir="${pwd}/simple-Auto"
 
 
-for i in $(seq 80 5 230)
+cd ${dir}
+########  evaluation for different coverages ########
+
+printf "" > evalAvg.txt
+echo var'\t'threshold'\t'abdncError'\t'methylCallError'\t'TP'\t'FN'\t'FP >> evalAvg.txt
+
+printf "" > mcf.txt
+echo var'\t'minCostFlow >> mcf.txt
+
+printf "" > weight.txt
+printf "" > match.txt
+printf "" > matchApp.txt
+
+
+for i in $(seq 5 3 200)
 do
-echo -n "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/simple-Auto/eval.txt
-echo -e threshold'\t'abdncError'\t'methylCallError'\t'TP'\t'FN'\t'FP >> /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/simple-Auto/eval.txt
 
-echo -n "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/simple-Auto/input.txt
-echo 1 757121 230 $i 2 1 20 0 80 10 >> /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/simple-Auto/input.txt
-echo 25 75 >> /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/simple-Auto/input.txt
+printf "" > ${dir}/eval.txt
+echo threshold  abdncError  methylCallError TP  FN  FP >> ${dir}/eval.txt
+printf "" > ${dir}/input.txt
+
+echo 1 757121 230 $i 2 1 20 0 80 10 >> ${dir}/input.txt
+echo 25 75 >> ${dir}/input.txt
 #echo $i >> evalReadLength.txt
 #echo -n "   " >> evalReadLength.txt
 
@@ -201,35 +210,29 @@ echo $i
 for j in {1..100}
 do
 
-echo -n "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/simple-Auto/shortRead.txt
-echo -n "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/simple-Auto/simPattern.txt
-echo -n "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/simple-Auto/patterns.tsv
-echo -n "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/simple-Auto/weight.txt
-echo -n "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/simple-Auto/match.txt
-
-
-#change directory to  /cbcb/project-scratch/fdorri/Code/methylFlow/testing/
-cd /cbcb/project-scratch/fdorri/Code/methylFlow/testing/
+printf "" > ${dir}/shortRead.txt
+printf "" > ${dir}/simPattern.txt
+printf "" > ${dir}/patterns.tsv
+printf "" > ${dir}/weight.txt
+printf "" > ${dir}/match.txt
 
 
 
-echo "SimulateReadLength"
-../build/simulator/mfSimulate  /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/simple-Auto/input.txt /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/simple-Auto
+echo "SimulateCoverage"
+${mfSimulate} ${dir}/input.txt ${dir}
 
+echo "MethylFlowCoverage"
+${mf} -i ${dir}/shortRead.txt -o ${dir} -s 1 -chr 1
 
-echo "MethylFlowReadLength"
-../build/methylFlow/methylFlow -i /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/simple-Auto/shortRead.txt -o /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/simple-Auto/ -s 1 -chr 1
-
-
-echo "EvaluateReadLength"
-../build/evaluation/mfEvaluation /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/simple-Auto /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/simple-Auto 757120 757360 $i
+echo "EvaluateCoverage"
+${mfEvaluate} ${dir} ${dir} 757121 757353 $i
 
 done
-
-../build/avgEval/avgEvaluation /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/simple-Auto /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/simple-Auto $i
+echo "avgEval Start"
+${avgEvaluate} ${dir} ${dir} $i
 
 #sed -e "s/$/$i/" eval.txt
-
+echo "avgEval end"
 done
 
 else
@@ -247,30 +250,32 @@ then
 
 
 echo "Hard Setting"
-
-cd /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/hard/
-
-
-########  evaluation for different read lengthes ########
-
-echo -n "" > evalAvg.txt
-echo -e var'\t'threshold'\t'abdncError'\t'methylCallError'\t'TP'\t'FN'\t'FP >> evalAvg.txt
-
-echo -n "" > mcf.txt
-echo -e var'\t'minCostFlow >> mcf.txt
-echo -n "" > weight.txt
-echo -n "" > match.txt
-echo -n "" > matchApp.txt
+dir="${pwd}/hard"
 
 
-for i in $(seq 50 5 230)
+cd ${dir}
+########  evaluation for different coverages ########
+
+printf "" > evalAvg.txt
+echo var'\t'threshold'\t'abdncError'\t'methylCallError'\t'TP'\t'FN'\t'FP >> evalAvg.txt
+
+printf "" > mcf.txt
+echo var'\t'minCostFlow >> mcf.txt
+
+printf "" > weight.txt
+printf "" > match.txt
+printf "" > matchApp.txt
+
+
+for i in $(seq 5 3 200)
 do
-echo -n "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/hard/eval.txt
-echo -e threshold'\t'abdncError'\t'methylCallError'\t'TP'\t'FN'\t'FP >> /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/hard/eval.txt
 
-echo -n "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/hard/input.txt
-echo 1 757121 230 $i 10 1 20 0 80 10 >> /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/hard/input.txt
-echo 10 10 10 10 10 10 10 10 10 10 >> /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/hard/input.txt
+printf "" > ${dir}/eval.txt
+echo threshold  abdncError  methylCallError TP  FN  FP >> ${dir}/eval.txt
+printf "" > ${dir}/input.txt
+
+echo 1 757121 230 $i 10 1 20 0 80 10 >> ${dir}/input.txt
+echo 10 10 10 10 10 10 10 10 10 10 >> ${dir}/input.txt
 #echo $i >> evalReadLength.txt
 #echo -n "   " >> evalReadLength.txt
 
@@ -281,65 +286,64 @@ echo $i
 for j in {1..100}
 do
 
-echo -n "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/hard/shortRead.txt
-echo -n "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/hard/simPattern.txt
-echo -n "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/hard/patterns.tsv
-echo -n "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/hard/weight.txt
-echo -n "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/hard/match.txt
-
-
-#change directory to  /cbcb/project-scratch/fdorri/Code/methylFlow/testing/
-cd /cbcb/project-scratch/fdorri/Code/methylFlow/testing/
+printf "" > ${dir}/shortRead.txt
+printf "" > ${dir}/simPattern.txt
+printf "" > ${dir}/patterns.tsv
+printf "" > ${dir}/weight.txt
+printf "" > ${dir}/match.txt
 
 
 
-echo "SimulateReadLength"
-../build/simulator/mfSimulate /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/hard/input.txt  /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/hard
+echo "SimulateCoverage"
+${mfSimulate} ${dir}/input.txt ${dir}
 
+echo "MethylFlowCoverage"
+${mf} -i ${dir}/shortRead.txt -o ${dir} -s 1 -chr 1
 
-echo "MethylFlowReadLength"
-../build/methylFlow/methylFlow -i /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/hard/shortRead.txt -o /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/hard/ -l 1 -s 1 -chr 1
-
-
-echo "EvaluateReadLength"
-../build/evaluation/mfEvaluation /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/hard /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/hard 757121 757353 $i
+echo "EvaluateCoverage"
+${mfEvaluate} ${dir} ${dir} 757121 757353 $i
 
 done
-
-../build/avgEval/avgEvaluation /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/hard /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/hard $i
+echo "avgEval Start"
+${avgEvaluate} ${dir} ${dir} $i
 
 #sed -e "s/$/$i/" eval.txt
-
+echo "avgEval end"
 done
+
+
 
 elif [ "$2" == 1 ];
 then
 
 
 echo "Moderate Setting"
-
-cd /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/moderate/
-
-########  evaluation for different read lengthes ########
-
-echo -n "" > evalAvg.txt
-echo -e var'\t'threshold'\t'abdncError'\t'methylCallError'\t'TP'\t'FN'\t'FP >> evalAvg.txt
-
-echo -n "" > mcf.txt
-echo -e var'\t'minCostFlow >> mcf.txt
-echo -n "" > weight.txt
-echo -n "" > match.txt
-echo -n "" > matchApp.txt
+dir="${pwd}/moderate"
 
 
-for i in $(seq 50 5 230)
+cd ${dir}
+########  evaluation for different coverages ########
+
+printf "" > evalAvg.txt
+echo var'\t'threshold'\t'abdncError'\t'methylCallError'\t'TP'\t'FN'\t'FP >> evalAvg.txt
+
+printf "" > mcf.txt
+echo var'\t'minCostFlow >> mcf.txt
+
+printf "" > weight.txt
+printf "" > match.txt
+printf "" > matchApp.txt
+
+
+for i in $(seq 5 3 200)
 do
-echo -n "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/moderate/eval.txt
-echo -e threshold'\t'abdncError'\t'methylCallError'\t'TP'\t'FN'\t'FP >> /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/moderate/eval.txt
 
-echo -n "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/moderate/input.txt
-echo 1 757121 230 $i 4 1 20 0 80 10 >> /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/moderate/input.txt
-echo 15 15 35 35 >> /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/moderate/input.txt
+printf "" > ${dir}/eval.txt
+echo threshold  abdncError  methylCallError TP  FN  FP >> ${dir}/eval.txt
+printf "" > ${dir}/input.txt
+
+echo 1 757121 230 $i 4 1 20 0 80 10 >> ${dir}/input.txt
+echo 15 15 35 35 >> ${dir}/input.txt
 #echo $i >> evalReadLength.txt
 #echo -n "   " >> evalReadLength.txt
 
@@ -350,65 +354,67 @@ echo $i
 for j in {1..100}
 do
 
-echo -n "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/moderate/shortRead.txt
-echo -n "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/moderate/simPattern.txt
-echo -n "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/moderate/patterns.tsv
-echo -n "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/moderate/weight.txt
-echo -n "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/moderate/match.txt
-
-
-#change directory to  /cbcb/project-scratch/fdorri/Code/methylFlow/testing/
-cd /cbcb/project-scratch/fdorri/Code/methylFlow/testing/
+printf "" > ${dir}/shortRead.txt
+printf "" > ${dir}/simPattern.txt
+printf "" > ${dir}/patterns.tsv
+printf "" > ${dir}/weight.txt
+printf "" > ${dir}/match.txt
 
 
 
-echo "SimulateReadLength"
-../build/simulator/mfSimulate /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/moderate/input.txt /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/moderate
+echo "SimulateCoverage"
+${mfSimulate} ${dir}/input.txt ${dir}
 
+echo "MethylFlowCoverage"
+${mf} -i ${dir}/shortRead.txt -o ${dir} -s 1 -chr 1
 
-echo "MethylFlowReadLength"
-../build/methylFlow/methylFlow -i /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/moderate/shortRead.txt -o /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/moderate/ -l 1 -s 1 -chr 1
-
-
-echo "EvaluateReadLength"
-../build/evaluation/mfEvaluation /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/moderate /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/moderate 757121 757353 $i
+echo "EvaluateCoverage"
+${mfEvaluate} ${dir} ${dir} 757121 757353 $i
 
 done
-
-../build/avgEval/avgEvaluation /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/moderate /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/moderate $i
+echo "avgEval Start"
+${avgEvaluate} ${dir} ${dir} $i
 
 #sed -e "s/$/$i/" eval.txt
-
+echo "avgEval end"
 done
+
+
+
+
+
 
 elif [ "$2" == 0 ];
 then
 
 
 echo "Simple Setting"
-
-cd /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/simple/
-
-########  evaluation for different read lengthes ########
-
-echo -n "" > evalAvg.txt
-echo -e var'\t'threshold'\t'abdncError'\t'methylCallError'\t'TP'\t'FN'\t'FP >> evalAvg.txt
-
-echo -n "" > mcf.txt
-echo -e var'\t'minCostFlow >> mcf.txt
-echo -n "" > weight.txt
-echo -n "" > match.txt
-echo -n "" > matchApp.txt
+dir="${pwd}/simple"
 
 
-for i in $(seq 50 5 230)
+cd ${dir}
+########  evaluation for different coverages ########
+
+printf "" > evalAvg.txt
+echo var'\t'threshold'\t'abdncError'\t'methylCallError'\t'TP'\t'FN'\t'FP >> evalAvg.txt
+
+printf "" > mcf.txt
+echo var'\t'minCostFlow >> mcf.txt
+
+printf "" > weight.txt
+printf "" > match.txt
+printf "" > matchApp.txt
+
+
+for i in $(seq 5 3 200)
 do
-echo -n "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/simple/eval.txt
-echo -e threshold'\t'abdncError'\t'methylCallError'\t'TP'\t'FN'\t'FP >> /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/simple/eval.txt
 
-echo -n "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/simple/input.txt
-echo 1 757121 230 $i 2 1 20 0 80 10 >> /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/simple/input.txt
-echo 25 75 >> /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/simple/input.txt
+printf "" > ${dir}/eval.txt
+echo threshold  abdncError  methylCallError TP  FN  FP >> ${dir}/eval.txt
+printf "" > ${dir}/input.txt
+
+echo 1 757121 230 $i 2 1 20 0 80 10 >> ${dir}/input.txt
+echo 25 75 >> ${dir}/input.txt
 #echo $i >> evalReadLength.txt
 #echo -n "   " >> evalReadLength.txt
 
@@ -419,36 +425,32 @@ echo $i
 for j in {1..100}
 do
 
-echo -n "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/simple/shortRead.txt
-echo -n "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/simple/simPattern.txt
-echo -n "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/simple/patterns.tsv
-echo -n "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/simple/weight.txt
-echo -n "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/simple/match.txt
-
-
-#change directory to  /cbcb/project-scratch/fdorri/Code/methylFlow/testing/
-cd /cbcb/project-scratch/fdorri/Code/methylFlow/testing/
+printf "" > ${dir}/shortRead.txt
+printf "" > ${dir}/simPattern.txt
+printf "" > ${dir}/patterns.tsv
+printf "" > ${dir}/weight.txt
+printf "" > ${dir}/match.txt
 
 
 
-echo "SimulateReadLength"
-../build/simulator/mfSimulate  /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/simple/input.txt /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/simple
+echo "SimulateCoverage"
+${mfSimulate} ${dir}/input.txt ${dir}
 
+echo "MethylFlowCoverage"
+${mf} -i ${dir}/shortRead.txt -o ${dir} -s 1 -chr 1
 
-echo "MethylFlowReadLength"
-../build/methylFlow/methylFlow -i /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/simple/shortRead.txt -o /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/simple/ -l 1 -s 1 -chr 1
-
-
-echo "EvaluateReadLength"
-../build/evaluation/mfEvaluation /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/simple /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/simple 757121 757353 $i
+echo "EvaluateCoverage"
+${mfEvaluate} ${dir} ${dir} 757121 757353 $i
 
 done
-
-../build/avgEval/avgEvaluation /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/simple /cbcb/project-scratch/fdorri/Code/methylFlow/testing/readLength/simple $i
+echo "avgEval Start"
+${avgEvaluate} ${dir} ${dir} $i
 
 #sed -e "s/$/$i/" eval.txt
-
+echo "avgEval end"
 done
+
+
 
 
 else
