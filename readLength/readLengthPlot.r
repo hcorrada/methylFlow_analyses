@@ -462,7 +462,12 @@ dev.off()
 print("plot false discovery rate vs readLength ")
 pdf(paste(dir,"FDRVreadLength.pdf",sep=""))
 
-FDR = readLengthAvg$FP/(readLengthAvg$TP + readLengthAvg$FP)
+FDR = rep(0, length(readLengthAvg$var));
+sel <- which(readLengthAvg$TP + readLengthAvg$FP != 0)
+
+
+
+FDR[sel] = readLengthAvg$FP[sel]/(readLengthAvg$TP[sel] + readLengthAvg$FP[sel])
 
 # get the range for the x and y axis
 xrange <- range(readLengthAvg$var)
