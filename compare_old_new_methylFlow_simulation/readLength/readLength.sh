@@ -23,14 +23,12 @@
 pwd=$(pwd)
 echo $pwd
 
-mf_new="/Users/faezeh/Projects/methylFlow/install/bin/methylFlow"
 mf_old="/Users/faezeh/Projects/methylFlow_old/methylFlow/build/methylFlow/methylFlow"
 
-
-mfSimulate="/Users/faezeh/Projects/methylFlow/install/bin/mfSimulate"
-mfEvaluate="/Users/faezeh/Projects/methylFlow/install/bin/mfEvaluation"
-avgEvaluate="/Users/faezeh/Projects/methylFlow/install/bin/avgEvaluation"
-
+mf_new="${MF_INSTALL_DIR}/bin/methylFlow"
+mfSimulate="${MF_INSTALL_DIR}/bin/mfSimulate"
+mfEvaluate="${MF_INSTALL_DIR}/bin/mfEvaluation"
+avgEvaluate="${MF_INSTALL_DIR}/bin/avgEvaluation"
 
 if [ "$1" == 0 ];
 then

@@ -20,7 +20,10 @@ data <- commandArgs(T)
 print(data)
 #dir <- "/cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/"
 wdir <- "/Users/faezeh/Projects/compare_old_new_methylFlow_simulation/cpg/"
-data[1]= 2
+
+#data[1]= 2
+
+
 #wdir <- getwd();
 print(wdir)
 ##### reading files ##################
