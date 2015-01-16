@@ -1,6 +1,6 @@
 #!/usr/bin/env Rscript
 
-### run ./cpgPlot.r par1
+### run ./CpGPlot.r par1
 
 ### par1 = 0 > simple
 ### par1 = 1 > moderate
@@ -19,71 +19,67 @@ count = (end - start) / step + 1
 data <- commandArgs(T)
 print(data)
 #dir <- "/cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/"
-wdir <- "/Users/faezeh/Projects/compare_old_new_methylFlow_simulation/cpg/"
-
-#data[1]= 2
-
-
+wdir <- "/Users/faezeh/Projects/methylFlow/exps/compare_old_new_methylFlow_simulation/cpg/"
+data[1]= 2
 #wdir <- getwd();
 print(wdir)
 ##### reading files ##################
-  if ( data[1] == "2"){
-    print("Hard Setting Plot")
-    dir_new <- paste(wdir,"/hard/new/",sep="");
-    dir_old <- paste(wdir,"/hard/old/",sep="");
-
-
-    CpGAvg_new <- read.table(paste(dir_new,"evalAvg.txt",sep=""), sep="\t", row.names=NULL, header = TRUE)
-    
-    mcfCpG_new <- read.table(paste(dir_new,"mcf.txt",sep=""), sep="\t", row.names=NULL, header = TRUE)
-    
-    CpGAvg_old <- read.table(paste(dir_old,"evalAvg.txt",sep=""), sep="\t", row.names=NULL, header = TRUE)
-    
-    mcfCpG_old <- read.table(paste(dir_old,"mcf.txt",sep=""), sep="\t", row.names=NULL, header = TRUE)
-    
-    dir <- paste(wdir, "/hard/fig/", sep="")
-    
-    
-    #dir <- "/cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/hard-Auto/"
-    #dir <- "/Users/faezeh/Desktop/project/methylFlow_analyses/cpg/hard-Auto/"
-    
-  }
+if ( data[1] == "2"){
+  print("Hard Setting Plot")
+  dir_new <- paste(wdir,"/hard/new/",sep="");
+  dir_old <- paste(wdir,"/hard/old/",sep="");
   
-  if ( data[1] == "1"){
-    print("Moderate Setting Plot")
-    dir_new <- paste(wdir,"/moderate/new/",sep="");
-    dir_old <- paste(wdir,"/moderate/old/",sep="");
-    
-    
-    CpGAvg_new <- read.table(paste(dir_new,"evalAvg.txt",sep=""), sep="\t", row.names=NULL, header = TRUE)
-    
-    mcfCpG_new <- read.table(paste(dir_new,"mcf.txt",sep=""), sep="\t", row.names=NULL, header = TRUE)
-    
-    CpGAvg_old <- read.table(paste(dir_old,"evalAvg.txt",sep=""), sep="\t", row.names=NULL, header = TRUE)
-    
-    mcfCpG_old <- read.table(paste(dir_old,"mcf.txt",sep=""), sep="\t", row.names=NULL, header = TRUE)
-    
-    dir <- paste(wdir, "/moderate/fig/", sep="")
-    
-    
-  }
+  
+  CpGAvg_new <- read.table(paste(dir_new,"evalAvg.txt",sep=""), sep="\t", row.names=NULL, header = TRUE)
+  
+  mcfCpG_new <- read.table(paste(dir_new,"mcf.txt",sep=""), sep="\t", row.names=NULL, header = TRUE)
+  
+  CpGAvg_old <- read.table(paste(dir_old,"evalAvg.txt",sep=""), sep="\t", row.names=NULL, header = TRUE)
+  
+  mcfCpG_old <- read.table(paste(dir_old,"mcf.txt",sep=""), sep="\t", row.names=NULL, header = TRUE)
+  
+  dir <- paste(wdir, "/hard/fig/", sep="")
+  
+  
+  #dir <- "/cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/hard-Auto/"
+  #dir <- "/Users/faezeh/Desktop/project/methylFlow_analyses/cpg/hard-Auto/"
+  
+}
 
-  if ( data[1] == "0"){
-    print("Simple Setting Plot")
-    dir_new <- paste(wdir,"/simple/new/",sep="");
-    dir_old <- paste(wdir,"/simple/old/",sep="");
-    
-    
-    CpGAvg_new <- read.table(paste(dir_new,"evalAvg.txt",sep=""), sep="\t", row.names=NULL, header = TRUE)
-    
-    mcfCpG_new <- read.table(paste(dir_new,"mcf.txt",sep=""), sep="\t", row.names=NULL, header = TRUE)
-    
-    CpGAvg_old <- read.table(paste(dir_old,"evalAvg.txt",sep=""), sep="\t", row.names=NULL, header = TRUE)
-    
-    mcfCpG_old <- read.table(paste(dir_old,"mcf.txt",sep=""), sep="\t", row.names=NULL, header = TRUE)
-    
-    dir <- paste(wdir, "/simple/fig/", sep="")
-  }
+if ( data[1] == "1"){
+  print("Moderate Setting Plot")
+  dir_new <- paste(wdir,"/moderate/new/",sep="");
+  dir_old <- paste(wdir,"/moderate/old/",sep="");
+  
+  
+  CpGAvg_new <- read.table(paste(dir_new,"evalAvg.txt",sep=""), sep="\t", row.names=NULL, header = TRUE)
+  
+  mcfCpG_new <- read.table(paste(dir_new,"mcf.txt",sep=""), sep="\t", row.names=NULL, header = TRUE)
+  
+  CpGAvg_old <- read.table(paste(dir_old,"evalAvg.txt",sep=""), sep="\t", row.names=NULL, header = TRUE)
+  
+  mcfCpG_old <- read.table(paste(dir_old,"mcf.txt",sep=""), sep="\t", row.names=NULL, header = TRUE)
+  dir <- paste(wdir, "/moderate/fig/", sep="")
+  
+  
+  
+}
+if ( data[1] == "0"){
+  print("Simple Setting Plot")
+  dir_new <- paste(wdir,"/simple/new/",sep="");
+  dir_old <- paste(wdir,"/simple/old/",sep="");
+  
+  
+  CpGAvg_new <- read.table(paste(dir_new,"evalAvg.txt",sep=""), sep="\t", row.names=NULL, header = TRUE)
+  
+  mcfCpG_new <- read.table(paste(dir_new,"mcf.txt",sep=""), sep="\t", row.names=NULL, header = TRUE)
+  
+  CpGAvg_old <- read.table(paste(dir_old,"evalAvg.txt",sep=""), sep="\t", row.names=NULL, header = TRUE)
+  
+  mcfCpG_old <- read.table(paste(dir_old,"mcf.txt",sep=""), sep="\t", row.names=NULL, header = TRUE)
+  
+  dir <- paste(wdir, "/simple/fig/", sep="")
+}
 
 ############## different plots for differnet CpG rate #################################################################
 
@@ -91,7 +87,7 @@ print(wdir)
 #### plot the abundance Error for different CpG rate
 
 print("plot abundance Error vs CpG rate")
-pdf(paste(dir,"abdVCpG.pdf",sep=""))
+pdf(paste(dir,"abdVCpG.pdf",sep=""), width =3, height =2.5, pointsize=8)
 par(mar= c(5,5,2,2))
 
 # get the range for the x and y axis
@@ -107,57 +103,58 @@ yrange_max <- max(yrange_new[2], yrange_old[2])
 
 #ntrees <- length(unique(CpGAvg$threshold))
 ntrees <- count
+
 # set up the plot
 plot(0, 0,
      pch = "",
-     ylim = c(yrange_min, yrange_max + 0.1),
+     ylim = c(yrange_min, yrange_max),
      xlim = c(xrange_min, xrange_max),
      xlab="CpG",
      ylab="Abundance Error",
-     cex.lab= 2,
-     cex.axis = 1.5)
+     cex.lab= 1.2,
+     #     cex.axis = 0.5
+)
 
 ltys = seq(1:ntrees)
 #colors <- rainbow(ntrees)
 mypalette<-brewer.pal(2*ntrees,"Dark2")
-pchs = seq(0,ntrees -1)
+pchs = seq(0,ntrees-1)
 # add lines
 for (i in 1:ntrees) {
   j = step * (i-1) + start
   print(j)
   
   sel <- which(CpGAvg_new$threshold == j)
-  points(CpGAvg_new$var[sel],
-         CpGAvg_new$abdncError[sel],
+  points(CpGAvg_new$var[sel[seq(1,length(sel),by=5)]],
+         CpGAvg_new$abdncError[sel[seq(1,length(sel),by=5)]],
          col = "blue",
          pch = pchs[i],
          cex = 0.5,
          type = "b",
-         lwd = 2.5)
+         lty = 2,
+         lwd = 1.0
+  )
   
   
-  sel <- which(CpGAvg_old$threshold == j)
-  points(CpGAvg_old$var[sel],
-         CpGAvg_old$abdncError[sel],
+  
+  sel <- which(readLengthAvg_old$threshold == j)
+  points(CpGAvg_old$var[sel[seq(1,length(sel),by=5)]],
+         CpGAvg_old$abdncError[sel[seq(1,length(sel),by=5)]],
          col = "red",
          pch = pchs[i],
          cex = 0.5,
          type = "b",
-         lwd = 2.5)
+         lty = 2,
+         lwd = 1.0
+  )
 }
 
-#legend("topright", legend = rep(seq(start,end, by = step),2),
-#       pch = pchs,
-#       col = rep(mypalette,2),
-#       #  cex = 0.5,
-#       lwd= 2.5)
-
-legend("topright", legend= c("cpg-loss with thr = 0.1","cpg-loss with thr = 0.25","cpg-loss with thr = 0.4","region-loss with thr = 0.1","region-loss with thr = 0.25","region-loss with thr = 0.4"),
-       title = "thresholds",
-       pch = rep(pchs,2),
-       col = c("blue", "blue","blue","red","red","red"),
-       #  cex = 0.5,
-       lwd= 2.5)
+#legend("topright", legend= c("cpg-loss with thr = 0.1","cpg-loss with thr = 0.25","cpg-loss with thr = 0.4","region-loss with thr = 0.1","region-loss with thr = 0.25","region-loss with thr = 0.4"),
+#      title = "thresholds",
+#     pch = rep(pchs,2),
+#    col = c("blue", "blue","blue","red","red","red"),
+#   #  cex = 0.5,
+#  lwd= 2.5)
 
 
 dev.off()
@@ -184,7 +181,7 @@ dev.off()
 #### plot the Methyl Call  Error for different CpG rate
 
 print("plot abundance Error vs CpG rate")
-pdf(paste(dir,"methylVCpG.pdf",sep=""))
+pdf(paste(dir,"methylVCpG.pdf",sep=""), width =3, height =2.5, pointsize=8)
 par(mar= c(5,5,2,2))
 
 # get the range for the x and y axis
@@ -200,56 +197,58 @@ yrange_max <- max(yrange_new[2], yrange_old[2])
 
 #ntrees <- length(unique(CpGAvg$threshold))
 ntrees <- count
-if (data[1] > 1) {
-  yrange_max = yrange_max + 0.03
-}
+
 # set up the plot
 plot(0, 0,
      pch = "",
-     ylim = c(yrange_min, yrange_max + 0.03),
+     ylim = c(yrange_min, yrange_max),
      xlim = c(xrange_min, xrange_max),
      xlab="CpG",
      ylab="Methyl Call Error",
-     cex.lab= 2,
-     cex.axis = 1.5)
+     cex.lab= 1.2
+     #     cex.axis = 1.5
+)
 
 ltys = seq(1:ntrees)
 #colors <- rainbow(ntrees)
 mypalette<-brewer.pal(2*ntrees,"Dark2")
-pchs = seq(0,ntrees -1)
+pchs = seq(0,ntrees-1)
 # add lines
 for (i in 1:ntrees) {
   j = step * (i-1) + start
   print(j)
   
   sel <- which(CpGAvg_new$threshold == j)
-  points(CpGAvg_new$var[sel],
-         CpGAvg_new$methylCallError[sel],
+  points(CpGAvg_new$var[sel[seq(1,length(sel),by=5)]],
+         CpGAvg_new$methylCallError[sel[seq(1,length(sel),by=5)]],
          col = "blue",
          pch = pchs[i],
          cex = 0.5,
          type = "b",
-         lwd = 2.5)
-  
+         lty = 2,
+         lwd = 1.0
+  )
   
   sel <- which(CpGAvg_old$threshold == j)
-  points(CpGAvg_old$var[sel],
-         CpGAvg_old$methylCallError[sel],
+  points(CpGAvg_old$var[sel[seq(1,length(sel),by=5)]],
+         CpGAvg_old$methylCallError[sel[seq(1,length(sel),by=5)]],
          col = "red",
          pch = pchs[i],
          cex = 0.5,
          type = "b",
-         lwd = 2.5)
+         lty = 2,
+         lwd = 1.0
+  )
 }
-
-legend("topright", legend= c("cpg-loss with thr = 0.1","cpg-loss with thr = 0.25","cpg-loss with thr = 0.4","region-loss with thr = 0.1","region-loss with thr = 0.25","region-loss with thr = 0.4"),
-       title = "thresholds",
-       pch = rep(pchs,2),
-       col = c("blue", "blue","blue","red","red","red"),
-       #  cex = 0.5,
-       lwd= 2.5)
-
-
+#legend("topright", legend=c("region-loss","cpg-loss"),
+# col=c("red", "blue"))
+#legend("topright", legend = rep(seq(start,end, by = step),2),
+#legend("topright", legend= c("cpg-loss with thr = 0.1","cpg-loss with thr = 0.25","cpg-loss with thr = 0.4","region-loss with thr = 0.1","region-loss with thr = 0.25","region-loss with thr = 0.4"),
+#title = "thresholds",
+#     pch = rep(pchs,2),
+#    col = c("blue", "blue","blue","red","red","red"),
+#   #  cex = 0.5,
+#  lwd= 2.5)
 
 dev.off()
 
@@ -257,7 +256,7 @@ dev.off()
 
 
 print("plot min cost flow error vs CpG")
-pdf(paste(dir,"mcfCpG.pdf",sep=""))
+pdf(paste(dir,"mcfCpG.pdf",sep=""), width =3, height =2.5, pointsize=8)
 par(mar= c(5,5,2,2))
 
 
@@ -274,20 +273,38 @@ xrange_max <- max(xrange_new[2], xrange_old[2])
 yrange_min <- min(yrange_new[1], yrange_old[1])
 yrange_max <- max(yrange_new[2], yrange_old[2])
 
-if (data[1] > 1){
-  yrange_max = yrange_max + 0.1
-}
 
-plot(agg_new, ylab="Min Cost Flow Error", ylim=c(yrange_min, yrange_max), xlim= c(xrange_min, xrange_max), cex.lab = 2, cex.axis = 1.5, pch = 19, col= "blue")
-points(agg_old,  cex.axis = 1.5, pch = 19, col= "red")
 
-legend("topright", legend = c("New", "Old"),
-       pch = 19,
-       col = c("blue","red"),
-       #  cex = 0.5,
-       lwd= 2.5)
+
+
+plot(agg_new[seq(1,length(agg_new[,1]), by=2),1],agg_new[seq(1,length(agg_new[,1]), by=2),2], xlab="CpG", 
+     ylab="Min Cost Flow Error", 
+     ylim=c(yrange_min, yrange_max), 
+     xlim= c(xrange_min, xrange_max), 
+     cex.lab = 1.2, 
+     cex.axis = 1.0, 
+     pch = 1, 
+     cex = 0.7,
+     lty = 1,
+     type = "b",
+     col= "blue")
+
+
+points(agg_old[seq(1,length(agg_old[,1]), by=2),1],agg_old[seq(1,length(agg_old[,1]), by=2),2],  
+       cex.axis = 1.0,
+       cex = 0.7,
+       pch = 1, 
+       lty = 1,
+       col= "red")
+#legend("topright", legend = c("CpG-loss", "region-loss"),
+#      pch = 19,
+#     col = c("blue","red"),
+#     #  cex = 0.5,
+#    lwd= 2.5)
 
 dev.off()
+
+
 
 
 

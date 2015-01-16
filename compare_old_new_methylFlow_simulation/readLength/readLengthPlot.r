@@ -19,9 +19,8 @@ count = (end - start) / step + 1
 data <- commandArgs(T)
 print(data)
 #dir <- "/cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/"
-wdir <- "/Users/faezeh/Projects/compare_old_new_methylFlow_simulation/readLength/"
-
-#data[1]= 2
+wdir <- "/Users/faezeh/Projects/methylFlow/exps/compare_old_new_methylFlow_simulation/readLength/"
+data[1]= 2
 #wdir <- getwd();
 print(wdir)
 ##### reading files ##################
@@ -306,7 +305,7 @@ points(agg_old[seq(1,length(agg_old[,1]), by=2),1],agg_old[seq(1,length(agg_old[
        col= "red")
 
 if (data[1] == 2) {
-legend("topright", legend = c("New", "Old"),
+legend("topright", legend = c("cpg-loss", "region-loss"),
      pch = 19,
      col = c("blue","red"),
      cex = 0.85,
