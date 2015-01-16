@@ -6,10 +6,13 @@
 
 # on CBCB server
 # dir <- /cbcb/project-scratch/fdorri/Data/sra
-# sh fastq2sam.sh
+# sh fastq2sam.sh par
+## par = input file name
 # or
 #qsub -q xlarge -l mem=120G,walltime=72:00:00 run.sh -N bismark
 
+
+input=$1
 
 echo "Hello world"
 
@@ -19,10 +22,13 @@ echo "Hello world"
 ####### sra to fastq:
 #/cbcb/project-scratch/fdorri/sratoolkit.2.3.5-2-centos_linux64/bin/fastq-dump -A /cbcb/project-scratch/fdorri/Data/sra/SRR1020509.sra -O /cbcb/project-scratch/fdorri/Data/sra/fastq &
 
+inputdir="/cbcb/project-scratch/fdorri/Data/sra/fastq/${input}"
+outputfile="${input}.sorted.sam"
 
-
+echo "start splitting"
 #Splitting the fastq files to smaller one so that we can easily run bismark
- split -l 40000000 /cbcb/project-scratch/fdorri/Data/sra/fastq/SRR1015705.fastq /cbcb/project-scratch/fdorri/Data/sra/fastq/s_
+split -l 40000000 ${inputdir} /cbcb/project-scratch/fdorri/Data/sra/fastq/s_
+echo "splitting finished"
 
 
 
@@ -32,6 +38,7 @@ for f in s_*
 do
 mv $f  ${f}.fastq
 done
+echo "renaming file finished"
 
 
 
@@ -42,6 +49,9 @@ for f in s_*
 do
 /cbcb/project-scratch/fdorri/bismark_v0.11.1/bismark -n 1 -l 50 -o /cbcb/project-scratch/fdorri/Data/sra/sam/ /cbcb/project-scratch/fdorri/Data/refseq/ /cbcb/project-scratch/fdorri/Data/sra/fastq/${f}
 done
+
+echo "bismark finished"
+
 
 #sorting sam files, first need to change to bam and then sort
 cd /cbcb/project-scratch/fdorri/Data/sra/sam/
@@ -50,12 +60,18 @@ do
 samtools view -Shu $f | samtools sort -  sorted.${f}
 done
 
+echo "sam to sorted bam finished"
+
 
 #merge all the bam files into a single bam
 samtools merge  finall_s.bam sorted.s_*.bam
 
+echo "merging sorted bams finished"
+
+
 # get final sorted sam from sorted bam
-samtools view finall_s.bam -h -o SRR1015705.sorted.sam
+samtools view finall_s.bam -h -o ${outputfile}
+echo "sorted bam to final sorted sam file finished"
 
 
 
@@ -63,34 +79,34 @@ samtools view finall_s.bam -h -o SRR1015705.sorted.sam
 #######################################################################################
 
 #Splitting the fastq files to smaller one so that we can easily run bismark
-split -l 40000000 /cbcb/project-scratch/fdorri/Data/sra/fastq/SRR1020523.fastq /cbcb/project-scratch/fdorri/Data/sra/fastq/a_
+#split -l 40000000 /cbcb/project-scratch/fdorri/Data/sra/fastq/SRR1020523.fastq /cbcb/project-scratch/fdorri/Data/sra/fastq/a_
 
 #renaming the file, adding .fastq extention
-cd /cbcb/project-scratch/fdorri/Data/sra/fastq/
-for f in a_*
-do
-mv $f  ${f}.fastq
-done
+#cd /cbcb/project-scratch/fdorri/Data/sra/fastq/
+#for f in a_*
+#do
+#mv $f  ${f}.fastq
+#done
 
 #running Bismark and align every fastq files to selected genome using bismark
-cd /cbcb/project-scratch/fdorri/Data/sra/fastq/
-for f in a_*
-do
-/cbcb/project-scratch/fdorri/bismark_v0.11.1/bismark -n 1 -l 50 -o /cbcb/project-scratch/fdorri/Data/sra/sam/ /cbcb/project-scratch/fdorri/Data/refseq/ /cbcb/project-scratch/fdorri/Data/sra/fastq/${f}
-done
+#cd /cbcb/project-scratch/fdorri/Data/sra/fastq/
+#for f in a_*
+#do
+#/cbcb/project-scratch/fdorri/bismark_v0.11.1/bismark -n 1 -l 50 -o /cbcb/project-scratch/fdorri/Data/sra/sam/ /cbcb/project-scratch/fdorri/Data/refseq/ /cbcb/project-scratch/fdorri/Data/sra/fastq/${f}
+#done
 
 
 #sorting sam files, first need to change to bam and then sort
-cd /cbcb/project-scratch/fdorri/Data/sra/sam/
-for f in a_*.sam
-do
-samtools view -Shu $f | samtools sort -  sorted.${f}
-done
+#cd /cbcb/project-scratch/fdorri/Data/sra/sam/
+#for f in b_*.sam
+#do
+#samtools view -Shu $f | samtools sort -  sorted.${f}
+#done
 
 
 #merge all the bam files into a single bam
-samtools merge  finall_a.bam sorted.a_*.bam
+#samtools merge  finall_a.bam sorted.a_*.bam
 
 # get final sorted sam from sorted bam
-samtools view finall_a.bam -h -o SRR1020523.sorted.sam
+#samtools view finall_a.bam -h -o SRR1020523.sorted.sam
 
