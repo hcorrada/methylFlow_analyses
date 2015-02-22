@@ -20,7 +20,7 @@ data <- commandArgs(T)
 print(data)
 #dir <- "/cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/"
 wdir <- "/Users/faezeh/Projects/methylFlow/exps/compare_old_new_methylFlow_simulation/readLength/"
-data[1]= 2
+#data[1]= 2
 #wdir <- getwd();
 print(wdir)
 ##### reading files ##################
@@ -292,21 +292,22 @@ plot(agg_new[seq(1,length(agg_new[,1]), by=2),1],agg_new[seq(1,length(agg_new[,1
      cex.lab = 1.2, 
      cex.axis = 1.0, 
      pch = 1, 
-     cex = 0.7,
+     cex = 0.5,
      lty = 1,
      type = "b",
      col= "blue")
 
-points(agg_old[seq(1,length(agg_old[,1]), by=2),1],agg_old[seq(1,length(agg_old[,1]), by=2),2],  
+lines(agg_old[seq(1,length(agg_old[,1]), by=2),1],agg_old[seq(1,length(agg_old[,1]), by=2),2],
        cex.axis = 1.0,
-       cex = 0.7,
-       pch = 1, 
+       cex = 0.5,
+       pch = 5,
        lty = 1,
+       type = 'b',
        col= "red")
 
 if (data[1] == 2) {
 legend("topright", legend = c("cpg-loss", "region-loss"),
-     pch = 19,
+     pch = c(1,5),
      col = c("blue","red"),
      cex = 0.85,
      pt.cex = 0.5,

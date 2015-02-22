@@ -1,14 +1,10 @@
-#!/bin/bash
+#!/usr/bin/bash
 
-### run :  sh coverage.sh par1 par2
+### run :  sh cpg.sh par1
 
-### par1 = 0 > new mf
-### par1 = 1 > old mf
-
-### par2 = 0 > simple
-### par2 = 1 > moderate
-### par2 = 2 > Hard
-
+### par1 = 0 > simple
+### par1 = 1 > moderate
+### par1 = 2 > Hard
 
 
 ## input file
@@ -32,168 +28,20 @@ mfEvaluate="${MF_INSTALL_DIR}/bin/mfEvaluation"
 avgEvaluate="${MF_INSTALL_DIR}/bin/avgEvaluation"
 
 
-if [ "$1" == 1 ];
-then
-
-if [ "$2" == 2 ];
-then
-
-
-echo "Hard Setting"
-dir="${pwd}/hard/old"
-
-
-cd ${dir}
-#cd /cbcb/project-scratch/fdorri/Code/methylFlow/testing/coverage/hard/
-########  evaluation for different coverages ########
-printf "" > evalAvg.txt
-echo var'\t'threshold'\t'abdncError'\t'methylCallError'\t'TP'\t'FN'\t'FP >> evalAvg.txt
-
-printf "" > mcf.txt
-echo var'\t'minCostFlow >> mcf.txt
-
-printf "" > weight.txt
-printf "" > match.txt
-printf "" > matchApp.txt
-
-
-for i in $(seq 5 3 200)
-do
-#printf "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/coverage/hard/eval.txt
-#echo threshold  abdncError  methylCallError TP  FN  FP >> /cbcb/project-scratch/fdorri/Code/methylFlow/testing/coverage/hard/eval.txt
-#printf "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/coverage/hard/input.txt
-
-printf "" > ${dir}/eval.txt
-echo threshold  abdncError  methylCallError TP  FN  FP >> ${dir}/eval.txt
-printf "" > ${dir}/input.txt
-echo 1 757121 230 70 10 1 $i 0 80 1 >> ${dir}/input.txt
-echo 10 10 10 10 10 10 10 10 10 10 >> ${dir}/input.txt
-
-#echo 1 757121 230 70 10 1 $i 0 80 1 >> /cbcb/project-scratch/fdorri/Code/methylFlow/testing/coverage/hard/input.txt
-#echo 10 10 10 10 10 10 10 10 10 10 >> /cbcb/project-scratch/fdorri/Code/methylFlow/testing/coverage/hard/input.txt
-#echo $i >> evalCoverage.txt
-#printf "   " >> evalCoverage.txt
-
-echo $i
-for j in {1..100}
-do
-
-
-#printf "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/coverage/hard/shortRead.txt
-#printf "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/coverage/hard/simPattern.txt
-#printf "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/coverage/hard/patterns.tsv
-#printf "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/coverage/hard/weight.txt
-#printf "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/coverage/hard/match.txt
-
-
-printf "" > ${dir}/shortRead.txt
-printf "" > ${dir}/simPattern.txt
-printf "" > ${dir}/patterns.tsv
-printf "" > ${dir}/weight.txt
-printf "" > ${dir}/match.txt
-
-
-#change directory to  /cbcb/project-scratch/fdorri/Code/methylFlow/testing/
-#cd /cbcb/project-scratch/fdorri/Code/methylFlow/testing/
-
-
-echo "SimulateCoverage"
-#../build/simulator/mfSimulate /cbcb/project-scratch/fdorri/Code/methylFlow/testing/coverage/hard/input.txt /cbcb/project-scratch/fdorri/Code/methylFlow/testing/coverage/hard
-${mfSimulate} ${dir}/input.txt ${dir}
-
-echo "MethylFlowCoverage"
-#../build/methylFlow/methylFlow -i /cbcb/project-scratch/fdorri/Code/methylFlow/testing/coverage/hard/shortRead.txt -o /cbcb/project-scratch/fdorri/Code/methylFlow/testing/coverage/hard/  -l 1 -s 1 -chr 1
-${mf_old} -i ${dir}/shortRead.txt -o ${dir} -l 1 -s 1 -chr 1
-
-echo "EvaluateCoverage"
-#../build/evaluation/mfEvaluation /cbcb/project-scratch/fdorri/Code/methylFlow/testing/coverage/hard /cbcb/project-scratch/fdorri/Code/methylFlow/testing/coverage/hard 757121 757353 $i
-${mfEvaluate} ${dir} ${dir} 757121 757353 $i
-
-done
-echo "avgEval Start"
-#../build/avgEval/avgEvaluation /cbcb/project-scratch/fdorri/Code/methylFlow/testing/coverage/hard /cbcb/project-scratch/fdorri/Code/methylFlow/testing/coverage/hard $i
-${avgEvaluate} ${dir} ${dir} $i
-
-#sed -e "s/$/$i/" eval.txt
-echo "avgEval end"
-done
-
-
-
-elif [ "$2" == 1 ];
-then
-
-echo "Moderate Setting"
-
-dir="${pwd}/moderate/old"
-
-
-cd ${dir}
-########  evaluation for different coverages ########
-
-printf "" > evalAvg.txt
-echo var'\t'threshold'\t'abdncError'\t'methylCallError'\t'TP'\t'FN'\t'FP >> evalAvg.txt
-
-printf "" > mcf.txt
-echo var'\t'minCostFlow >> mcf.txt
-
-printf "" > weight.txt
-printf "" > match.txt
-printf "" > matchApp.txt
-
-
-for i in $(seq 5 3 200)
-do
-
-printf "" > ${dir}/eval.txt
-echo threshold  abdncError  methylCallError TP  FN  FP >> ${dir}/eval.txt
-printf "" > ${dir}/input.txt
-echo 1 757121 230 70 4 1 $i 0 80 1 >> ${dir}/input.txt
-echo 15 15 35 35 >> ${dir}/input.txt
-
-
-echo $i
-for j in {1..100}
-do
-
-printf "" > ${dir}/shortRead.txt
-printf "" > ${dir}/simPattern.txt
-printf "" > ${dir}/patterns.tsv
-printf "" > ${dir}/weight.txt
-printf "" > ${dir}/match.txt
-
-
-
-echo "SimulateCoverage"
-${mfSimulate} ${dir}/input.txt ${dir}
-
-
-echo "MethylFlowCoverage"
-${mf_old} -i ${dir}/shortRead.txt -o ${dir} -s 1 -chr 1
-
-echo "EvaluateCoverage"
-${mfEvaluate} ${dir} ${dir} 757121 757353 $i
-
-done
-echo "avgEval Start"
-${avgEvaluate} ${dir} ${dir} $i
-
-#sed -e "s/$/$i/" eval.txt
-echo "avgEval end"
-done
-
-
-
-
-elif [ "$2" == 0 ];
+if [ "$1" == 0 ];
 then
 
 
 echo "Simple Setting"
-dir="${pwd}/simple/old"
+dir_new="${pwd}/simple/new"
+dir_old="${pwd}/simple/old"
+
+echo $dir_new
+echo $dir_old
 
 
-cd ${dir}
+
+cd ${dir_new}
 ########  evaluation for different coverages ########
 
 printf "" > evalAvg.txt
@@ -207,64 +55,7 @@ printf "" > match.txt
 printf "" > matchApp.txt
 
 
-for i in $(seq 5 3 200)
-do
-
-printf "" > ${dir}/eval.txt
-echo threshold  abdncError  methylCallError TP  FN  FP >> ${dir}/eval.txt
-printf "" > ${dir}/input.txt
-echo 1 757121 230 70 2 1 $i 0 80 1 >> ${dir}/input.txt
-echo 25 75 >> ${dir}/input.txt
-
-
-echo $i
-for j in {1..100}
-do
-
-printf "" > ${dir}/shortRead.txt
-printf "" > ${dir}/simPattern.txt
-printf "" > ${dir}/patterns.tsv
-printf "" > ${dir}/weight.txt
-printf "" > ${dir}/match.txt
-
-
-
-echo "SimulateCoverage"
-${mfSimulate} ${dir}/input.txt ${dir}
-
-echo "MethylFlowCoverage"
-${mf_old} -i ${dir}/shortRead.txt -o ${dir} -s 1 -chr 1
-
-echo "EvaluateCoverage"
-${mfEvaluate} ${dir} ${dir} 757121 757353 $i
-
-done
-echo "avgEval Start"
-${avgEvaluate} ${dir} ${dir} $i
-
-#sed -e "s/$/$i/" eval.txt
-echo "avgEval end"
-done
-
-
-
-else
-echo " your input should be 0 , 1 or 2"
-fi
-
-
-
-elif [ "$1" == 0 ];
-then
-
-if [ "$2" == 2 ];
-then
-
-echo "Hard Setting"
-dir="${pwd}/hard/new"
-
-
-cd ${dir}
+cd ${dir_old}
 ########  evaluation for different coverages ########
 
 printf "" > evalAvg.txt
@@ -278,54 +69,98 @@ printf "" > match.txt
 printf "" > matchApp.txt
 
 
-for i in $(seq 5 3 200)
+
+for i in $(seq 5 3 120)
 do
 
-printf "" > ${dir}/eval.txt
-echo threshold  abdncError  methylCallError TP  FN  FP >> ${dir}/eval.txt
-printf "" > ${dir}/input.txt
-echo 1 757121 230 70 10 1 $i 0 80 1 >> ${dir}/input.txt
-echo 10 10 10 10 10 10 10 10 10 10 >> ${dir}/input.txt
+printf "" > ${dir_new}/eval.txt
+echo threshold  abdncError  methylCallError TP  FN  FP >> ${dir_new}/eval.txt
+
+printf "" > ${dir_old}/eval.txt
+echo threshold  abdncError  methylCallError TP  FN  FP >> ${dir_old}/eval.txt
+
+
+printf "" > ../input.txt
+
+echo 1 757121 500 70 2 1 $i 0 80 10  >> ../input.txt
+echo 25 75 >> ../input.txt
+#echo $i >> evalReadLength.txt
+#echo -n "   " >> evalReadLength.txt
+
+
 
 
 echo $i
 for j in {1..100}
 do
 
-printf "" > ${dir}/shortRead.txt
-printf "" > ${dir}/simPattern.txt
-printf "" > ${dir}/patterns.tsv
-printf "" > ${dir}/weight.txt
-printf "" > ${dir}/match.txt
+printf "" > ${dir_old}/shortRead.txt
+printf "" > ${dir_old}/simPattern.txt
+printf "" > ${dir_old}/patterns.tsv
+printf "" > ${dir_old}/weight.txt
+printf "" > ${dir_old}/match.txt
+
+printf "" > ${dir_new}/shortRead.txt
+printf "" > ${dir_new}/simPattern.txt
+printf "" > ${dir_new}/patterns.tsv
+printf "" > ${dir_new}/weight.txt
+printf "" > ${dir_new}/match.txt
+
 
 
 
 echo "SimulateCoverage"
-${mfSimulate} ${dir}/input.txt ${dir}
+${mfSimulate} ../input.txt ./..
 
-echo "MethylFlowCoverage"
-${mf_new} -i ${dir}/shortRead.txt -o ${dir} -s 1 -chr 1
 
-echo "EvaluateCoverage"
-${mfEvaluate} ${dir} ${dir} 757121 757353 $i
+cp ../shortRead.txt ${dir_new}
+cp ../shortRead.txt ${dir_old}
+
+cp ../simPattern.txt ${dir_new}
+cp ../simPattern.txt ${dir_old}
+
+
+echo "MethylFlowCoverage_new"
+${mf_new} -i ${dir_new}/shortRead.txt -o ${dir_new} -s 1 -chr 1
+
+echo "MethylFlowCoverage_old"
+${mf_old} -i ${dir_old}/shortRead.txt -o ${dir_old} -s 1 -chr 1
+
+echo "EvaluateCoverage_new"
+${mfEvaluate} ${dir_new} ${dir_new} 757121 757653 $i
+
+echo "EvaluateCoverage_old"
+${mfEvaluate} ${dir_old} ${dir_old} 757121 757653 $i
 
 done
-echo "avgEval Start"
-${avgEvaluate} ${dir} ${dir} $i
+echo "avgEval Start_new"
+${avgEvaluate} ${dir_new} ${dir_new} $i
+
+echo "avgEval Start_old"
+${avgEvaluate} ${dir_old} ${dir_old} $i
 
 #sed -e "s/$/$i/" eval.txt
 echo "avgEval end"
 done
 
 
-elif [ "$2" == 1 ];
+
+
+
+elif [ "$1" == 1 ];
 then
+
 
 echo "Moderate Setting"
-dir="${pwd}/moderate/new"
+dir_new="${pwd}/moderate/new"
+dir_old="${pwd}/moderate/old"
+
+echo $dir_new
+echo $dir_old
 
 
-cd ${dir}
+
+cd ${dir_new}
 ########  evaluation for different coverages ########
 
 printf "" > evalAvg.txt
@@ -339,56 +174,111 @@ printf "" > match.txt
 printf "" > matchApp.txt
 
 
-for i in $(seq 5 3 200)
+cd ${dir_old}
+########  evaluation for different coverages ########
+
+printf "" > evalAvg.txt
+echo var'\t'threshold'\t'abdncError'\t'methylCallError'\t'TP'\t'FN'\t'FP >> evalAvg.txt
+
+printf "" > mcf.txt
+echo var'\t'minCostFlow >> mcf.txt
+
+printf "" > weight.txt
+printf "" > match.txt
+printf "" > matchApp.txt
+
+
+
+for i in $(seq 5 3 120)
 do
 
-printf "" > ${dir}/eval.txt
-echo threshold  abdncError  methylCallError TP  FN  FP >> ${dir}/eval.txt
-printf "" > ${dir}/input.txt
-echo 1 757121 230 70 4 1 $i 0 80 1 >> ${dir}/input.txt
-echo 15 15 35 35 >> ${dir}/input.txt
+printf "" > ${dir_new}/eval.txt
+echo threshold  abdncError  methylCallError TP  FN  FP >> ${dir_new}/eval.txt
+
+printf "" > ${dir_old}/eval.txt
+echo threshold  abdncError  methylCallError TP  FN  FP >> ${dir_old}/eval.txt
+
+
+printf "" > ../input.txt
+
+echo 1 757121 500 70 4 1 $i 0 80 10 >> ../input.txt
+echo 15 15 35 35 >> ../input.txt
+#echo $i >> evalReadLength.txt
+#echo -n "   " >> evalReadLength.txt
+
+
 
 
 echo $i
 for j in {1..100}
 do
 
-printf "" > ${dir}/shortRead.txt
-printf "" > ${dir}/simPattern.txt
-printf "" > ${dir}/patterns.tsv
-printf "" > ${dir}/weight.txt
-printf "" > ${dir}/match.txt
+printf "" > ${dir_old}/shortRead.txt
+printf "" > ${dir_old}/simPattern.txt
+printf "" > ${dir_old}/patterns.tsv
+printf "" > ${dir_old}/weight.txt
+printf "" > ${dir_old}/match.txt
+
+printf "" > ${dir_new}/shortRead.txt
+printf "" > ${dir_new}/simPattern.txt
+printf "" > ${dir_new}/patterns.tsv
+printf "" > ${dir_new}/weight.txt
+printf "" > ${dir_new}/match.txt
+
 
 
 
 echo "SimulateCoverage"
-${mfSimulate} ${dir}/input.txt ${dir}
+${mfSimulate} ../input.txt ./..
 
-echo "MethylFlowCoverage"
-${mf_new} -i ${dir}/shortRead.txt -o ${dir} -s 1 -chr 1
+cp ../shortRead.txt ${dir_new}
+cp ../shortRead.txt ${dir_old}
 
-echo "EvaluateCoverage"
-${mfEvaluate} ${dir} ${dir} 757121 757353 $i
+cp ../simPattern.txt ${dir_new}
+cp ../simPattern.txt ${dir_old}
+
+
+
+echo "MethylFlowCoverage_new"
+${mf_new} -i ${dir_new}/shortRead.txt -o ${dir_new} -s 1 -chr 1
+
+echo "MethylFlowCoverage_old"
+${mf_old} -i ${dir_old}/shortRead.txt -o ${dir_old} -s 1 -chr 1
+
+echo "EvaluateCoverage_new"
+${mfEvaluate} ${dir_new} ${dir_new} 757121 757653 $i
+
+echo "EvaluateCoverage_old"
+${mfEvaluate} ${dir_old} ${dir_old} 757121 757653 $i
 
 done
-echo "avgEval Start"
-${avgEvaluate} ${dir} ${dir} $i
+echo "avgEval Start_new"
+${avgEvaluate} ${dir_new} ${dir_new} $i
+
+echo "avgEval Start_old"
+${avgEvaluate} ${dir_old} ${dir_old} $i
 
 #sed -e "s/$/$i/" eval.txt
 echo "avgEval end"
 done
 
 
-elif [ "$2" == 0 ];
+
+
+elif [ "$1" == 2 ];
 then
 
 
-echo "Simple Setting"
+echo "Hard Setting"
+dir_new="${pwd}/hard/new"
+dir_old="${pwd}/hard/old"
 
-dir="${pwd}/simple/new"
+echo $dir_new
+echo $dir_old
 
 
-cd ${dir}
+
+cd ${dir_new}
 ########  evaluation for different coverages ########
 
 printf "" > evalAvg.txt
@@ -402,43 +292,88 @@ printf "" > match.txt
 printf "" > matchApp.txt
 
 
-for i in $(seq 5 3 200)
+cd ${dir_old}
+########  evaluation for different coverages ########
+
+printf "" > evalAvg.txt
+echo var'\t'threshold'\t'abdncError'\t'methylCallError'\t'TP'\t'FN'\t'FP >> evalAvg.txt
+
+printf "" > mcf.txt
+echo var'\t'minCostFlow >> mcf.txt
+
+printf "" > weight.txt
+printf "" > match.txt
+printf "" > matchApp.txt
+
+
+
+for i in $(seq 5 3 120)
 do
 
-printf "" > ${dir}/eval.txt
-echo threshold  abdncError  methylCallError TP  FN  FP >> ${dir}/eval.txt
-printf "" > ${dir}/input.txt
-echo 1 757121 230 70 2 1 $i 0 80 1 >> ${dir}/input.txt
-echo 25 75 >> ${dir}/input.txt
+printf "" > ${dir_new}/eval.txt
+echo threshold  abdncError  methylCallError TP  FN  FP >> ${dir_new}/eval.txt
+
+printf "" > ${dir_old}/eval.txt
+echo threshold  abdncError  methylCallError TP  FN  FP >> ${dir_old}/eval.txt
+
+
+printf "" > ../input.txt
+
+echo 1 757121 500 70 10 1 $i 0 80 10 >> ../input.txt
+echo 10 10 10 10 10 10 10 10 10 10 >> ../input.txt
+#echo $i >> evalReadLength.txt
+#echo -n "   " >> evalReadLength.txt
+
+
 
 
 echo $i
 for j in {1..100}
 do
 
-printf "" > ${dir}/shortRead.txt
-printf "" > ${dir}/simPattern.txt
-printf "" > ${dir}/patterns.tsv
-printf "" > ${dir}/weight.txt
-printf "" > ${dir}/match.txt
+printf "" > ${dir_old}/shortRead.txt
+printf "" > ${dir_old}/simPattern.txt
+printf "" > ${dir_old}/patterns.tsv
+printf "" > ${dir_old}/weight.txt
+printf "" > ${dir_old}/match.txt
+
+printf "" > ${dir_new}/shortRead.txt
+printf "" > ${dir_new}/simPattern.txt
+printf "" > ${dir_new}/patterns.tsv
+printf "" > ${dir_new}/weight.txt
+printf "" > ${dir_new}/match.txt
+
 
 
 
 echo "SimulateCoverage"
-${mfSimulate} ${dir}/input.txt ${dir}
+${mfSimulate} ../input.txt ./..
+
+cp ../shortRead.txt ${dir_new}
+cp ../shortRead.txt ${dir_old}
+
+cp ../simPattern.txt ${dir_new}
+cp ../simPattern.txt ${dir_old}
 
 
-echo "MethylFlowCoverage"
-echo ${dir}/shortRead.txt
-echo ${dir}
-${mf_new} -i ${dir}/shortRead.txt -o ${dir} -s 1 -chr 1
+echo "MethylFlowCoverage_new"
+${mf_new} -i ${dir_new}/shortRead.txt -o ${dir_new} -s 1 -chr 1
 
-echo "EvaluateCoverage"
-${mfEvaluate} ${dir} ${dir} 757121 757353 $i
+echo "MethylFlowCoverage_old"
+${mf_old} -i ${dir_old}/shortRead.txt -o ${dir_old} -s 1 -chr 1
+
+echo "EvaluateCoverage_new"
+${mfEvaluate} ${dir_new} ${dir_new} 757121 757653 $i
+
+echo "EvaluateCoverage_old"
+${mfEvaluate} ${dir_old} ${dir_old} 757121 757653 $i
 
 done
-echo "avgEval Start"
-${avgEvaluate} ${dir} ${dir} $i
+echo "avgEval Start_new"
+${avgEvaluate} ${dir_new} ${dir_new} $i
+
+echo "avgEval Start_old"
+${avgEvaluate} ${dir_old} ${dir_old} $i
 
 #sed -e "s/$/$i/" eval.txt
 echo "avgEval end"
@@ -446,10 +381,12 @@ done
 
 
 else
-echo " your input should be 0 , 1 or 2"
+echo "Your input should be 0, 1 or 2"
+exit 2
 fi
 
 
-else
-echo " your input should be 0 if it is automatic and 1 if lambda is hard coded"
-fi
+
+
+
+

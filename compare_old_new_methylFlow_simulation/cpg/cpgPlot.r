@@ -20,7 +20,7 @@ data <- commandArgs(T)
 print(data)
 #dir <- "/cbcb/project-scratch/fdorri/Code/methylFlow/testing/cpg/"
 wdir <- "/Users/faezeh/Projects/methylFlow/exps/compare_old_new_methylFlow_simulation/cpg/"
-data[1]= 2
+#data[1]= 2
 #wdir <- getwd();
 print(wdir)
 ##### reading files ##################
@@ -137,7 +137,7 @@ for (i in 1:ntrees) {
   
   
   
-  sel <- which(readLengthAvg_old$threshold == j)
+  sel <- which(CpGAvg_old$threshold == j)
   points(CpGAvg_old$var[sel[seq(1,length(sel),by=5)]],
          CpGAvg_old$abdncError[sel[seq(1,length(sel),by=5)]],
          col = "red",
@@ -284,17 +284,18 @@ plot(agg_new[seq(1,length(agg_new[,1]), by=2),1],agg_new[seq(1,length(agg_new[,1
      cex.lab = 1.2, 
      cex.axis = 1.0, 
      pch = 1, 
-     cex = 0.7,
+     cex = 0.5,
      lty = 1,
      type = "b",
      col= "blue")
 
 
-points(agg_old[seq(1,length(agg_old[,1]), by=2),1],agg_old[seq(1,length(agg_old[,1]), by=2),2],  
+lines(agg_old[seq(1,length(agg_old[,1]), by=2),1],agg_old[seq(1,length(agg_old[,1]), by=2),2],
        cex.axis = 1.0,
-       cex = 0.7,
-       pch = 1, 
+       cex = 0.5,
+       pch = 5,
        lty = 1,
+       type = "b",
        col= "red")
 #legend("topright", legend = c("CpG-loss", "region-loss"),
 #      pch = 19,

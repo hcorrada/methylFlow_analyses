@@ -219,7 +219,7 @@ float cost(Graph::Node u, Graph::Node v) {
     //cout << "mismatch " << mismatch <<  endl;
     
     //cout << "totalCpG " << totalCpG <<  endl;
-    
+   // cout << "-----------------------------------" << endl;
     
     //cout << "cost " << (float(mismatch) / totalCpG) <<  endl;
     
@@ -251,6 +251,7 @@ void buildGraph() {
             }
         }
     }
+    
     
     cout << "set weight" << endl;
     
@@ -354,7 +355,7 @@ void readMatchMatrix() {
 void computeErrorMatrix(double threshold) {
     float methylCallError = 0;
     float abndncError = 0;
-    
+    /*
     int match = 0;
     std::set<int> matchSet;
     for (int i = 0 ; i < truePatternNum ; i ++){
@@ -364,11 +365,11 @@ void computeErrorMatrix(double threshold) {
             methylCallError += weight_map[i];
             match++;
         }
-        /*else{
-         abndncError += pow(double(abdnc_map[i]),2) /10000;
-         abndncError += pow(double(abdnc_map[matchTrue_map[i]]),2) /10000;
+        //else{
+         //abndncError += pow(double(abdnc_map[i]),2) /1.0;
+         //abndncError += pow(double(abdnc_map[matchTrue_map[i]]),2) /10000;
          //methylCallError += weight_map[i];
-         }*/
+         //}
     }
     
     for(int i = truePatternNum; i < truePatternNum + estimatedPatternNum ; i++){
@@ -376,7 +377,56 @@ void computeErrorMatrix(double threshold) {
             abndncError += pow(double(abdnc_map[i]),2) /1.0;
         }
         
+    }*/
+    
+    int match = 0;
+    std::set<int> matchSet;
+    std::map<int, float> match_abdnc_map;
+    //weighted bundance Error
+    for(int i = 0; i < truePatternNum + estimatedPatternNum ; i++)
+        match_abdnc_map[i] = 0;
+    
+    for (int i = 0 ; i < truePatternNum ; i ++){
+        if(weight_map[i] < threshold) {
+            int matchId = matchTrue_map[i];
+            match_abdnc_map[matchId] += abdnc_map[i];
+            matchSet.insert(matchId);
+           // abndncError += pow(double(abdnc_map[i] - abdnc_map[matchId]),2)/1.0;
+            methylCallError += weight_map[i];
+            match++;
+        }
     }
+    
+    for (int i = 0 ; i < truePatternNum ; i ++){
+        if(weight_map[i] < threshold) {
+            abndncError += pow(double(abdnc_map[i])- abdnc_map[matchTrue_map[i]]*abdnc_map[i]/match_abdnc_map[matchTrue_map[i]],2)/1.0;
+        } else
+            abndncError += pow(double(abdnc_map[i]),2)/1.0;
+            
+    }
+    
+    
+    // 1-1 bundance Error
+     /*for (int i = 0 ; i < truePatternNum ; i ++){
+         if(weight_map[i] < threshold) {
+                int matchId = matchTrue_map[i];
+                abndncError += pow(double(abdnc_map[i] - abdnc_map[matchId]),2)/1.0;
+                methylCallError += weight_map[i];
+                match++;
+         }else
+            abndncError += pow(double(abdnc_map[i]),2)/1.0;
+
+      
+     }*/
+    
+    
+    
+    //for(int i = truePatternNum; i < truePatternNum + estimatedPatternNum ; i++){
+      //  if (match_abdnc_map[i] > 0.00001) {
+        //    abndncError += pow(double(abdnc_map[i] - match_abdnc_map[i]),2)/1.0;
+        //}
+    //}
+    
     // for case with less estimated pattern than true pattern
     
     
@@ -390,7 +440,8 @@ void computeErrorMatrix(double threshold) {
     //cout << "truePatternNum = " << truePatternNum << endl;
 
     methylCallError = methylCallError/match;
-    abndncError = sqrt(abndncError/TP);
+//    abndncError = sqrt(abndncError/TP);
+    abndncError = sqrt(abndncError/truePatternNum);
     if( !(TP == 0) ){
         evalFile << threshold << "\t" << abndncError << "\t" << methylCallError << "\t" << TP << "\t" << FN  << "\t"  << FP << std::endl;
         thr.push_back(threshold);
