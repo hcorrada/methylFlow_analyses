@@ -1,7 +1,6 @@
 #!/usr/bin/env Rscript
 ### run ./analysis.r
 
-
 library("devtools")
 path = "../../src/methylFlow/methylFlowr"
 load_all(path)
@@ -9,53 +8,111 @@ load_all(path)
 #install_github("rafalib","ririzarr")
 library("rafalib")
 
-datadir <- "/Users/faezeh/Projects/methylFlow/exps/bscapture/cpg_output"
+datadir_cpg <- "/Users/faezeh/Projects/methylFlow/exps/bscapture/cpg_output"
+datadir_region <- "/Users/faezeh/Projects/methylFlow/exps/bscapture/region_output"
 pd <- data.frame(subject=rep(4:6,2), status=c("T", "T", "T","N", "N", "N"))
 j <- "13"
 
 pd$dirname=sprintf("CAP_%s_%d", pd$status, pd$subject)
-objs <- lapply(seq(len=nrow(pd)), function(i) {
-    curdir <- file.path(datadir,pd$dirname[i],j)
-    read.methylflow.dir(curdir, pd$dirname[i],has.header=TRUE)
+
+objs_cpg <- lapply(seq(len=nrow(pd)), function(i) {
+    curdir <- file.path(datadir_cpg, pd$dirname[i],j)
+    print(curdir)
+    read.methylflow.dir(curdir, pd$dirname[i], has.header=TRUE)
 })
-names(objs) <- pd$dirname
 
-objs <- lapply(objs, processMethylpats)
+objs_region <- lapply(seq(len=nrow(pd)), function(i) {
+    curdir <- file.path(datadir_region, pd$dirname[i],j)
+    print(curdir)
+    read.methylflow.dir(curdir, pd$dirname[i], has.header=TRUE)
+})
 
-filteredObjs <- lapply(objs, mfFilterBy, minComponentCoverage=100, minComponentWidth=86)
-names(filteredObjs) <- names(objs)
+names(objs_cpg) <- pd$dirname
+names(objs_region) <- pd$dirname
 
 
-figdir <- file.path("figs2")
-if (!file.exists(figdir)) dir.create(figdir)
+objs_cpg <- lapply(objs_cpg, processMethylpats)
+objs_region <- lapply(objs_region, processMethylpats)
 
-pdf(file.path(figdir,"fragment_length.pdf"),height=8,width=8)
+filteredObjs_cpg <- lapply(objs_cpg, mfFilterBy, minComponentCoverage=100, minComponentWidth=86)
+names(filteredObjs_cpg) <- names(objs_cpg)
+
+
+filteredObjs_region <- lapply(objs_region, mfFilterBy, minComponentCoverage=100, minComponentWidth=86)
+names(filteredObjs_region) <- names(objs_region)
+
+
+figdir_region <- file.path("figs_region")
+figdir_cpg <- file.path("figs_cpg")
+if (!file.exists(figdir_region)) dir.create(figdir_region)
+if (!file.exists(figdir_cpg)) dir.create(figdir_cpg)
+
+
+pdf(file.path(figdir_region,"fragment_length.pdf"),height=8,width=8)
 mypar(1,1)
 
-widths <- lapply(filteredObjs, function(obj) width(components(obj)))
-ncpgs <- lapply(filteredObjs, function(obj) ncpgs(obj, level="pattern", summary="max"))
+widths <- lapply(filteredObjs_region, function(obj) width(components(obj)))
+ncpgs <- lapply(filteredObjs_region, function(obj) ncpgs(obj, level="pattern", summary="max"))
 
 names(ncpgs) <- names(widths) <- gsub("CAP_", "", names(widths))
 boxplot(widths, main="reconstructed fragment size")
-boxplot(ncpgs, main="number of cpgs in reconstructed fragments")
+boxplot(ncpgs, main="number of cpgs in reconstructed fragments", cex.lab =0.5)
 dev.off()
 
+
+
+
+pdf(file.path(figdir_cpg,"fragment_length.pdf"),height=8,width=8)
+mypar(1,1)
+
+widths <- lapply(filteredObjs_cpg, function(obj) width(components(obj)))
+ncpgs <- lapply(filteredObjs_cpg, function(obj) ncpgs(obj, level="pattern", summary="max"))
+
+names(ncpgs) <- names(widths) <- gsub("CAP_", "", names(widths))
+boxplot(widths, main="reconstructed fragment size")
+boxplot(ncpgs, main="number of cpgs in reconstructed fragments", cex.lab =0.5)
+dev.off()
+
+
 ####
-filteredObjs <- lapply(filteredObjs, mfFilterBy, minNumberOfPatterns=1)
+filteredObjs_region <- lapply(filteredObjs_region, mfFilterBy, minNumberOfPatterns=1)
+filteredObjs_cpg <- lapply(filteredObjs_cpg, mfFilterBy, minNumberOfPatterns=1)
 
-npats <- sapply(filteredObjs, npatterns, by.component=TRUE)
-compCoverage <- sapply(filteredObjs, counts, level="component", kind="raw")
 
-pdf(file.path(figdir,"patt_by_coverage.pdf"), height=4, width=6)
+npats_cpg <- sapply(filteredObjs_cpg, npatterns, by.component=TRUE)
+compCoverage_cpg <- sapply(filteredObjs_cpg, counts, level="component", kind="raw")
+
+npats_region <- sapply(filteredObjs_region, npatterns, by.component=TRUE)
+compCoverage_region <- sapply(filteredObjs_region, counts, level="component", kind="raw")
+
+
+pdf(file.path(figdir_cpg,"patt_by_coverage.pdf"), height=4, width=6)
 mypar(2,3)
-
-for (i in seq(along=filteredObjs)) {
-    plot(compCoverage[[i]], npats[[i]],main=names(filteredObjs)[i],xlab="coverage",ylab="num. patterns")
+  
+for (i in seq(along=filteredObjs_cpg)) {
+    plot(compCoverage_cpg[[i]], npats_cpg[[i]],main=names(filteredObjs_cpg)[i],xlab="coverage",ylab="num. patterns")
 }
 dev.off()
 
-rawCpgs <- lapply(filteredObjs, makeCpgGR, kind="raw")
-estimatedCpgs <- lapply(filteredObjs, makeCpgGR, kind="estimated")
+
+pdf(file.path(figdir_region,"patt_by_coverage.pdf"), height=4, width=6)
+mypar(2,3)
+
+for (i in seq(along=filteredObjs_region)) {
+    plot(compCoverage_region[[i]], npats_region[[i]],main=names(filteredObjs_region)[i],xlab="coverage",ylab="num. patterns")
+}
+dev.off()
+
+
+
+rawCpgs_cpg <- lapply(filteredObjs_cpg, makeCpgGR, kind="raw")
+estimatedCpgs_cpg <- lapply(filteredObjs_cpg, makeCpgGR, kind="estimated")
+
+
+rawCpgs_region <- lapply(filteredObjs_region, makeCpgGR, kind="raw")
+estimatedCpgs_region <- lapply(filteredObjs_region, makeCpgGR, kind="estimated")
+
+
 
 #readGRs <- lapply(seq(len=nrow(pd)), function(i) {
 #    curdir <- file.path("reads", pd$dirname[i])
@@ -76,7 +133,7 @@ estimatedCpgs <- lapply(filteredObjs, makeCpgGR, kind="estimated")
 #        if (ncpgs[i] == 0) return(NULL)
 #        strsplit(tmp[[i]], ":")
 #    })
-#
+#    
 #    locs <- lapply(tmp2, function(y) {
 #      if (is.null(y)) return(0)
 #      as.integer(sapply(y,"[",1))
@@ -117,9 +174,30 @@ estimatedCpgs <- lapply(filteredObjs, makeCpgGR, kind="estimated")
 #
 #readCpgs <- lapply(readCpgs, renameSeqlevels, value=structure("chr13", names="13"))
 #
-betaGR <- lapply(seq(along=rawCpgs), function(i) {
-    rawGR <- rawCpgs[[i]]
-    estGR <- estimatedCpgs[[i]]
+betaGR_cpg <- lapply(seq(along=rawCpgs_cpg), function(i) {
+    rawGR <- rawCpgs_cpg[[i]]
+    estGR <- estimatedCpgs_cpg[[i]]
+#    readGR <- readCpgs[[i]]
+
+    olaps <- findOverlaps(rawGR, estGR)
+    gr <- rawGR[queryHits(olaps),]
+    out <- gr
+    mcols(out) <- NULL
+    
+    out$rawBeta <- gr$Beta
+    out$rawCov <- gr$Cov
+    
+    gr <- estGR[subjectHits(olaps),]
+    out$estimatedBeta <- gr$Beta
+
+#    olaps <- findOverlaps(readGR, out)
+ #   out$readBeta <- readGR$Beta[queryHits(olaps)]
+    out
+})
+
+betaGR_region <- lapply(seq(along=rawCpgs_region), function(i) {
+    rawGR <- rawCpgs_region[[i]]
+    estGR <- estimatedCpgs_region[[i]]
     #    readGR <- readCpgs[[i]]
     
     olaps <- findOverlaps(rawGR, estGR)
@@ -138,19 +216,36 @@ betaGR <- lapply(seq(along=rawCpgs), function(i) {
     out
 })
 
-pdf(file.path(figdir,"meth_percentage.pdf"), height=6, width=6)
-mypar(1,1)
+pdf(file.path(figdir_cpg,"meth_percentage_1.pdf"), height=7, width=9)
+mypar(2,3)
 
-for (i in seq(along=betaGR)) {
-    gr <- betaGR[[i]]
+for (i in seq(along=betaGR_cpg)) {
+    gr <- betaGR_cpg[[i]]
+    plot(gr$rawBeta,gr$estimatedBeta,
+         bty='l',
+         main=names(filteredObjs_cpg)[i],
+         ylab="pattern methyl Percentage",
+         xlab="region methyl Precentage",
+         cex = 0.5,
+         cex.lab=.9)
+}
+dev.off()
+
+pdf(file.path(figdir_region,"meth_percentage_1.pdf"), height=7, width=9)
+mypar(2,3)
+
+for (i in seq(along=betaGR_region)) {
+    gr <- betaGR_region[[i]]
     plot(gr$rawBeta,gr$estimatedBeta,
     bty='l',
-    main=names(filteredObjs)[i],
+    main=names(filteredObjs_region)[i],
     ylab="pattern methyl Percentage",
     xlab="region methyl Precentage",
-    cex = 0.2,
+    cex = 0.5,
     cex.lab=.9)
 }
+dev.off()
+
 
 #for (i in seq(along=betaGR)) {
 #    gr <- betaGR[[i]]
@@ -163,7 +258,61 @@ for (i in seq(along=betaGR)) {
 #         cex.lab=.9)
 #}
 #
+
+
+
+pdf(file.path(figdir_cpg,"meth_pct_2.pdf"), height=9, width=10)
+mypar(2,3)
+
+#for (i in c(1,2,3)) {
+for (i in seq(along=betaGR_cpg)) {
+    gr_cpg <- betaGR_cpg[[i]]
+    plot(gr_cpg$rawBeta,gr_cpg$estimatedBeta,
+    bty='l',
+    main=pd$dirname[i],
+    ylab="pattern methyl Percentage",
+    xlab="region methyl Precentage",
+    col="blue",
+    cex = 0.5,
+    cex.lab=1.5)
+    
+    gr_region <- betaGR_region[[i]]
+    points(gr_region$rawBeta,gr_region$estimatedBeta,
+    bty='l',
+    col="red")
+}
+
+legend("bottomright", c("cpg_loss","region_loss"), col=c("blue", "red"), pch=1)
+
+
 dev.off()
+
+err_cpg = c()
+for (i in seq(along=betaGR_cpg)) {
+    gr <- betaGR_cpg[[i]]
+    err_cpg[i] <- sqrt(sum(gr$rawBeta - gr$estimatedBeta)^2/length(betaGR_cpg[[i]]))
+}
+
+err_region = c()
+for (i in seq(along=betaGR_region)) {
+    gr <- betaGR_region[[i]]
+    err_region[i] <- sqrt(sum(gr$rawBeta - gr$estimatedBeta)^2/length(betaGR_region[[i]]))
+}
+
+pd$error_cpg <- err_cpg
+pd$error_region <- err_region
+
+error <- rbind(err_cpg, err_region)
+
+colnames(error)= pd$dirname
+
+
+pdf(file.path(figdir_cpg,"meth_sqr_err_loss.pdf"))
+barplot(error,legend=T, beside=T)
+dev.off()
+
+
+
 
 
 allBeta <- betaGR[[1]]
@@ -175,7 +324,7 @@ mcols(allBeta)[[names(filteredObjs)[1]]] <- tmp
 for (i in seq(2,length(betaGR))) {
     gr <- betaGR[[i]]
     olaps <- findOverlaps(gr, allBeta)
-    
+
     sname <- names(filteredObjs)[i]
     mcols(allBeta)[[sname]] <- NA
     mcols(allBeta)[[sname]][subjectHits(olaps)] <- gr$estimatedBeta[queryHits(olaps)]
@@ -189,7 +338,7 @@ registerDoParallel(cores=2)
 betamat <- as.matrix(mcols(allBeta))
 
 bumps <- bumphunter(betamat, model.matrix(~1+status,data=pd),
-pos=start(allBeta), cluster=clusters, B=0, smooth=FALSE, cutoff=.2)
+                    pos=start(allBeta), cluster=clusters, B=0, smooth=FALSE, cutoff=.2)
 
 #plotRegion <- GRanges("chr13", IRanges(start=bumps$tab$start[1], bumps$tab$end[1]))
 #plotRegion <- plotRegion * -8
@@ -212,7 +361,7 @@ layoutmat <- matrix(c(8,rep(1,4),9,rep(2,3),rep(3,3),rep(4,3),rep(5,3),rep(6,3),
 layout(layoutmat)
 par(mar=c(0, 3, 0, 1.1))
 par(oma=c(0,0,0,0))
-
+    
 xlim <- c(start(plotRegion), end(plotRegion))
 
 plot(0, type="n", xlim=xlim, ylim=c(0,1), ylab="",xaxt="n",yaxt="n")
@@ -233,9 +382,9 @@ legend("bottomright", c("Normal","Tumor"), pch=22,pt.bg=1:2)
 indexes <- c(1,4,2,5,3,6)
 for (i in indexes) {
     plotPatterns(filteredObjs[[i]], plotRegion,
-    xaxt="n", yaxt="n", ylab="", xlab="",
-    bty="n")
-    #    mtext(side=3,paste(gsub("CAP_","",names(filteredObjs)[i])), cex=.7)
+                 xaxt="n", yaxt="n", ylab="", xlab="",
+                 bty="n")
+#    mtext(side=3,paste(gsub("CAP_","",names(filteredObjs)[i])), cex=.7)
 }
 dev.off()
 
@@ -258,11 +407,11 @@ maxEntrMat <- sapply(entrStats, makeVec, jointGR, "maxEntr")
 colData=DataFrame(pd)
 rownames(colData)=pd$dirname
 statsSE <- SummarizedExperiment(rowData=jointGR,
-colData=colData,
-assays=SimpleList(entropy=entrMat,
-normEntropy=nentrMat,
-maxEntropy=maxEntrMat,
-gini=giniMat))
+                                colData=colData,
+                                assays=SimpleList(entropy=entrMat,
+                                    normEntropy=nentrMat,
+                                    maxEntropy=maxEntrMat,
+                                    gini=giniMat))
 
 pdf(file.path(figdir, "entropy.pdf"),width=9,height=3)
 mypar(1,3)
@@ -297,10 +446,10 @@ betaMat <- sapply(betaGR, makeVec, jointGR, "estimatedBeta")
 normEntrMat <- sapply(entrStats, makeVec, jointGR, "normEntr")
 entrMat <- sapply(entrStats, makeVec, jointGR, "entr")
 cpgSE <- SummarizedExperiment(rowData=jointGR,
-colData=colData,
-assays=SimpleList(beta=betaMat,
-entropy=entrMat,
-normEntropy=normEntrMat))
+                              colData=colData,
+                              assays=SimpleList(beta=betaMat,
+                                  entropy=entrMat,
+                                  normEntropy=normEntrMat))
 
 pdf(file.path(figdir,"methEntropy.pdf"),width=9,height=3)
 mypar(1,3)
@@ -359,15 +508,15 @@ tmp <- lapply(4:6, function(subj) {
     jind <- subjectHits(d)[keep]
     
     list(comps=ncomps[keep,],
-    npats=cbind(npats[[nindex]][iind], npats[[tindex]][jind]),
-    ent=cbind(compent[[nindex]][iind], compent[[tindex]][jind]),
-    meth=cbind(compMeth[[nindex]][iind], compMeth[[tindex]][jind]))
+         npats=cbind(npats[[nindex]][iind], npats[[tindex]][jind]),
+         ent=cbind(compent[[nindex]][iind], compent[[tindex]][jind]),
+         meth=cbind(compMeth[[nindex]][iind], compMeth[[tindex]][jind]))
 })
 
 pdf(file.path(figdir,"compcompare.pdf"),height=4,width=12)
 mypar(1,3)
 
-for (i in 1:3) {
+  for (i in 1:3) {
     rng <- range(tmp[[i]]$npats, na.rm=TRUE)
     plot(tmp[[i]]$npats, xlim=rng, ylim=rng, xlab="normal num. patterns", ylab="tumor num. patterns",cex.lab=1.7,cex=1.3,pch=19)
     abline(0,1)
@@ -382,18 +531,18 @@ for (i in 1:3) {
     abline(0,1)
 }
 dev.off()
-
+  
 pdf(file.path(figdir, "compcompare2.pdf"), height=4, width=12)
 mypar(1,3)
 
-for (i in 1:3) {
+  for (i in 1:3) {
     nent <- tmp[[i]]$ent / log(tmp[[i]]$npats)
     deltam <- tmp[[i]]$meth[,2]-tmp[[i]]$meth[,1]
     deltae <- nent[,2] - nent[,1]
     plot(deltam, deltae,xlab="methylation difference", ylab="entropy difference",cex.lab=1.7,cex=1.3,pch=19,main=paste("Subject",i))
-}
-dev.off()
-
+  }
+  dev.off()
+  
 })
 
 
@@ -410,5 +559,3 @@ require(epivizr)
 mgr <- startEpiviz()
 
 devs <- lapply(seq(along=objs), function(i) mgr$addDevice(components(objs[[i]]), names(objs)[i]))
-Status API Training Shop Blog About
-© 2015 GitHub, Inc. Terms Privacy Security Contact
