@@ -108,7 +108,7 @@ dev.off()
 
 
 
-
+err <- c()
 for (i in seq(along=betaGR)) {
   gr <- betaGR[[i]]
   err[i] <- sqrt(sum(gr$rawBeta - gr$estimatedBeta)^2/length(betaGR[[i]]))
