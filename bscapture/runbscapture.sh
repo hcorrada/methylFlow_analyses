@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ### run :  sh sam.sh par1 par2 par3 par4 par5
-## Example: sh sam.sh  /Users/faezeh/Projects/methylFlow/data/bscapture ./cpg_output ./region_output 0
+## Example: sh runbscapture.sh  /Users/faezeh/Projects/methylFlow/data/bscapture ./cpg_output ./region_output 0
 
 ### par1 = input file directory
 
@@ -118,13 +118,13 @@ for subject in ${subjects}; do
             then
                 echo "SAM input MethylFlow"
                 #samtools view -Shu $2 | samtools sort - -o test.sorted | samtools view - -h -o test.sorted.sam
-                ${mf_cpg} -i ${filename} -o ${dirCpG} -sam -s 1 -chr ${chr}
+                ${mf_cpg} -i ${filename} -o ${dirCpG} -sam -cpgloss -s 1 -chr ${chr}
 
 
             elif [ "$4" == 0 ]
             then
                 echo "mf_cpg run"
-                ${mf_cpg} -i ${filename} -o ${dirCpG} -s 1 -chr ${chr}
+                ${mf_cpg} -i ${filename} -o ${dirCpG} -cpgloss -s 1 -chr ${chr}
             else
 
                 echo " your input should be 0, 1 "
@@ -152,13 +152,16 @@ for subject in ${subjects}; do
             then
                 echo "SAM input MethylFlow"
                 #samtools view -Shu $2 | samtools sort - -o test.sorted | samtools view - -h -o test.sorted.sam
-                ${mf_region} -i ${filename} -o ${dirRegion} -sam -s 1 chr ${chr}
+#${mf_region} -i ${filename} -o ${dirRegion} -sam -s 1 chr ${chr}
+                ${mf_cpg} -i ${filename} -o ${dirRegion} -sam -s 1 chr ${chr}
 
 
             elif [ "$4" == 0 ]
             then
                 echo "mf_region run"
-                ${mf_region} -i ${filename} -o ${dirRegion} -s 1 -chr ${chr}
+#${mf_region} -i ${filename} -o ${dirRegion} -s 1 -chr ${chr}
+                ${mf_cpg} -i ${filename} -o ${dirRegion} -s 1 -chr ${chr}
+
             else
 
             echo " your input should be 0, 1 "

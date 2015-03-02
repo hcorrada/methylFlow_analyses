@@ -114,10 +114,11 @@ cp ../simPattern.txt ${dir_old}
 
 
 echo "MethylFlowCoverage_new"
-${mf_new} -i ${dir_new}/shortRead.txt -o ${dir_new} -p -s 1 -chr 1
+${mf_new} -i ${dir_new}/shortRead.txt -o ${dir_new} -cpgloss -s 1 -chr 1
 
 echo "MethylFlowCoverage_old"
-${mf_old} -i ${dir_old}/shortRead.txt -o ${dir_old} -s 1 -chr 1
+#${mf_old} -i ${dir_old}/shortRead.txt -o ${dir_old} -s 1 -chr 1
+${mf_new} -i ${dir_old}/shortRead.txt -o ${dir_old} -s 1 -chr 1
 
 echo "EvaluateCoverage_new"
 ${mfEvaluate} ${dir_new} ${dir_new} 757121 757653 $i
@@ -223,10 +224,11 @@ cp ../simPattern.txt ${dir_old}
 
 
 echo "MethylFlowCoverage_new"
-${mf_new} -i ${dir_new}/shortRead.txt -o ${dir_new} -p -s 1 -chr 1
+${mf_new} -i ${dir_new}/shortRead.txt -o ${dir_new} -cpgloss -s 1 -chr 1
 
 echo "MethylFlowCoverage_old"
-${mf_old} -i ${dir_old}/shortRead.txt -o ${dir_old} -s 1 -chr 1
+#${mf_old} -i ${dir_old}/shortRead.txt -o ${dir_old} -s 1 -chr 1
+${mf_new} -i ${dir_old}/shortRead.txt -o ${dir_old} -s 1 -chr 1
 
 echo "EvaluateCoverage_new"
 ${mfEvaluate} ${dir_new} ${dir_new} 757121 757653 $i
@@ -332,10 +334,11 @@ cp ../simPattern.txt ${dir_old}
 
 
 echo "MethylFlowCoverage_new"
-${mf_new} -i ${dir_new}/shortRead.txt -o ${dir_new} -p -s 1 -chr 1
+${mf_new} -i ${dir_new}/shortRead.txt -o ${dir_new} -cpgloss -s 1 -chr 1
 
 echo "MethylFlowCoverage_old"
-${mf_old} -i ${dir_old}/shortRead.txt -o ${dir_old} -s 1 -chr 1
+#${mf_old} -i ${dir_old}/shortRead.txt -o ${dir_old} -s 1 -chr 1
+${mf_new} -i ${dir_old}/shortRead.txt -o ${dir_old} -s 1 -chr 1
 
 echo "EvaluateCoverage_new"
 ${mfEvaluate} ${dir_new} ${dir_new} 757121 757653 $i
