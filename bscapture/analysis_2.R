@@ -2,7 +2,8 @@
 ### run ./analysis.r
 
 library("devtools")
-path = "../../src/methylFlow/methylFlowr"
+path = "/Users/faezeh/Projects/methylFlow/src/methylFlow/methylFlowr"
+#path = "../../src/methylFlow/methylFlowr"
 load_all(path)
 
 #install_github("rafalib","ririzarr")
@@ -315,24 +316,26 @@ dev.off()
 
 
 
-allBeta <- betaGR[[1]]
+allBeta <- betaGR_region[[1]]
 tmp <- allBeta$estimatedBeta
 
 mcols(allBeta) <- NULL
-mcols(allBeta)[[names(filteredObjs)[1]]] <- tmp
+mcols(allBeta)[[names(filteredObjs_region)[1]]] <- tmp
 
-for (i in seq(2,length(betaGR))) {
-    gr <- betaGR[[i]]
+for (i in seq(2,length(betaGR_region))) {
+    gr <- betaGR_region[[i]]
     olaps <- findOverlaps(gr, allBeta)
 
-    sname <- names(filteredObjs)[i]
+    sname <- names(filteredObjs_region)[i]
     mcols(allBeta)[[sname]] <- NA
     mcols(allBeta)[[sname]][subjectHits(olaps)] <- gr$estimatedBeta[queryHits(olaps)]
 }
 
+
 library(bumphunter)
 clusters <- clusterMaker(seqnames(allBeta), start(allBeta), maxGap=100)
 
+#install.packages("doParallel", repos="http://R-Forge.R-project.org")
 library(doParallel)
 registerDoParallel(cores=2)
 betamat <- as.matrix(mcols(allBeta))
@@ -343,19 +346,19 @@ bumps <- bumphunter(betamat, model.matrix(~1+status,data=pd),
 #plotRegion <- GRanges("chr13", IRanges(start=bumps$tab$start[1], bumps$tab$end[1]))
 #plotRegion <- plotRegion * -8
 
-plotRegion <- GRanges("chr13", IRanges(start=38444300,end=38444850))
+plotRegion <- GRanges("13", IRanges(start=38444500,end=38444850))
 
 regionBeta <- subsetByOverlaps(allBeta, plotRegion)
 
 
 betamat <- as.matrix(mcols(regionBeta))
-Index <- splitit(pd$status)
+Index <- split(pd$status, pd$status)
 betamns <- sapply(Index, function(ind) rowMeans(betamat[,ind]))
 
 fits <- lapply(1:2, function(i) loess(betamns[,i]~start(regionBeta)))
 
 load_all(path)
-pdf(file.path(figdir, "region.pdf"),width=8,height=6)
+pdf(file.path(figdir_region, "region.pdf"),width=8,height=6)
 
 layoutmat <- matrix(c(8,rep(1,4),9,rep(2,3),rep(3,3),rep(4,3),rep(5,3),rep(6,3),rep(7,3)),nc=1)
 layout(layoutmat)
@@ -370,8 +373,8 @@ axis(side=1, at=lat, cex.axis=.8, mgp=c(1,.3,0))
 axis(side=2, at=c(0, 0.5, 1),las=1,cex.axis=.9, mgp=c(1,.4,0))
 title(xlab="genomic position (chr13)", ylab="DNA methylation", cex.lab=0.7)
 
-for (i in seq(along=filteredObjs)) {
-    points(start(regionBeta), mcols(regionBeta)[[names(filteredObjs[i])]], col=ifelse(pd$status[i]=="N",1,2), cex=.3, pch=19)
+for (i in seq(along=filteredObjs_region)) {
+    points(start(regionBeta), mcols(regionBeta)[[names(filteredObjs_region[i])]], col=ifelse(pd$status[i]=="N",1,2), cex=.3, pch=19)
 }
 
 for (i in 1:2) {
@@ -381,7 +384,7 @@ legend("bottomright", c("Normal","Tumor"), pch=22,pt.bg=1:2)
 
 indexes <- c(1,4,2,5,3,6)
 for (i in indexes) {
-    plotPatterns(filteredObjs[[i]], plotRegion,
+    plotPatterns(filteredObjs_region[[i]], plotRegion,
                  xaxt="n", yaxt="n", ylab="", xlab="",
                  bty="n")
 #    mtext(side=3,paste(gsub("CAP_","",names(filteredObjs)[i])), cex=.7)
@@ -390,7 +393,7 @@ dev.off()
 
 
 load_all(path)
-entrStats <- lapply(filteredObjs, getEntropyStats)
+entrStats <- lapply(filteredObjs_region, getEntropyStats)
 jointGR <- disjoin(unlist(do.call("GRangesList", entrStats)))
 
 makeVec <- function(gr, jointGR, slot) {
@@ -413,7 +416,7 @@ statsSE <- SummarizedExperiment(rowData=jointGR,
                                     maxEntropy=maxEntrMat,
                                     gini=giniMat))
 
-pdf(file.path(figdir, "entropy.pdf"),width=9,height=3)
+pdf(file.path(figdir_region, "entropy.pdf"),width=9,height=3)
 mypar(1,3)
 
 for (i in 1:3) {
@@ -441,8 +444,8 @@ for (i in 1:3) {
 }
 dev.off()
 
-jointGR <- disjoin(unlist(do.call(GRangesList, betaGR)))
-betaMat <- sapply(betaGR, makeVec, jointGR, "estimatedBeta")
+jointGR <- disjoin(unlist(do.call(GRangesList, betaGR_region)))
+betaMat <- sapply(betaGR_region, makeVec, jointGR, "estimatedBeta")
 normEntrMat <- sapply(entrStats, makeVec, jointGR, "normEntr")
 entrMat <- sapply(entrStats, makeVec, jointGR, "entr")
 cpgSE <- SummarizedExperiment(rowData=jointGR,
@@ -451,7 +454,7 @@ cpgSE <- SummarizedExperiment(rowData=jointGR,
                                   entropy=entrMat,
                                   normEntropy=normEntrMat))
 
-pdf(file.path(figdir,"methEntropy.pdf"),width=9,height=3)
+pdf(file.path(figdir_region,"methEntropy.pdf"),width=9,height=3)
 mypar(1,3)
 
 for (i in 1:3) {

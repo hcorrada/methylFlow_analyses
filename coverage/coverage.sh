@@ -277,13 +277,13 @@ printf "" > match.txt
 printf "" > matchApp.txt
 
 
-for i in $(seq 5 3 200)
+for i in $(seq 5 3 120)
 do
 
 printf "" > ${dir}/eval.txt
 echo threshold  abdncError  methylCallError TP  FN  FP >> ${dir}/eval.txt
 printf "" > ${dir}/input.txt
-echo 1 757121 230 70 10 1 $i 0 80 1 >> ${dir}/input.txt
+echo 1 757121 500 70 10 1 $i 0 80 10 >> ${dir}/input.txt
 echo 10 10 10 10 10 10 10 10 10 10 >> ${dir}/input.txt
 
 
@@ -344,7 +344,7 @@ do
 printf "" > ${dir}/eval.txt
 echo threshold  abdncError  methylCallError TP  FN  FP >> ${dir}/eval.txt
 printf "" > ${dir}/input.txt
-echo 1 757121 230 70 4 1 $i 0 80 1 >> ${dir}/input.txt
+echo 1 757121 500 70 4 1 $i 0 80 10 >> ${dir}/input.txt
 echo 15 15 35 35 >> ${dir}/input.txt
 
 
@@ -401,13 +401,13 @@ printf "" > match.txt
 printf "" > matchApp.txt
 
 
-for i in $(seq 5 3 200)
+for i in $(seq 5 3 120)
 do
 
 printf "" > ${dir}/eval.txt
 echo threshold  abdncError  methylCallError TP  FN  FP >> ${dir}/eval.txt
 printf "" > ${dir}/input.txt
-echo 1 757121 230 70 2 1 $i 0 80 1 >> ${dir}/input.txt
+echo 1 757121 500 70 2 1 $i 0 80 10 >> ${dir}/input.txt
 echo 25 75 >> ${dir}/input.txt
 
 

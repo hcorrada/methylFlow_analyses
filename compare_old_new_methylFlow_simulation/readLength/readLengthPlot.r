@@ -184,7 +184,7 @@ dev.off()
 
 #### plot the Methyl Call  Error for different readLength
 
-print("plot abundance Error vs readLength")
+print("plot Methyl Call  Error vs readLength")
 pdf(paste(dir,"methylVreadLength.pdf",sep=""), width=3, height=2.5, pointsize=8)
 par(mar= c(5,5,2,2))
 

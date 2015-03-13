@@ -59,13 +59,13 @@ printf "" > matchApp.txt
 #echo "var"  "u"   "v"    "weight "  >> weight.txt
 
 
-for i in $(seq 30 2 120)
+for i in $(seq 30 3 180)
 do
 printf "" > ${dir}/eval.txt
 echo threshold  abdncError  methylCallError TP  FN  FP >> ${dir}/eval.txt
 printf "" > ${dir}/input.txt
 
-echo 1 757121 230 70 10 1 20 0 $i 10  >> ${dir}/input.txt
+echo 1 757121 500 70 10 1 20 0 $i 10  >> ${dir}/input.txt
 echo 10 10 10 10 10 10 10 10 10 10 >> ${dir}/input.txt
 #echo $i >> evalCpG.txt
 #echo -n "   " >> evalCpG.txt
@@ -132,14 +132,14 @@ printf "" > matchApp.txt
 #echo "var"  "u"   "v"    "weight "  >> weight.txt
 
 
-for i in $(seq 30 2 120)
+for i in $(seq 30 2 180)
 do
 printf "" > ${dir}/eval.txt
 echo threshold  abdncError  methylCallError TP  FN  FP >> ${dir}/eval.txt
 printf "" > ${dir}/input.txt
 
-echo 1 757121 230 70 10 1 20 0 $i 10  >> ${dir}/input.txt
-echo 10 10 10 10 10 10 10 10 10 10 >> ${dir}/input.txt
+echo 1 757121 500 70 4 1 20 0 $i 10  >> ${dir}/input.txt
+echo 15 15 35 35 >> ${dir}/input.txt
 #echo $i >> evalCpG.txt
 #echo -n "   " >> evalCpG.txt
 echo $i
@@ -199,14 +199,14 @@ printf "" > matchApp.txt
 #echo "var"  "u"   "v"    "weight "  >> weight.txt
 
 
-for i in $(seq 30 2 120)
+for i in $(seq 30 2 180)
 do
 printf "" > ${dir}/eval.txt
 echo threshold  abdncError  methylCallError TP  FN  FP >> ${dir}/eval.txt
 printf "" > ${dir}/input.txt
 
-echo 1 757121 230 70 10 1 20 0 $i 10  >> ${dir}/input.txt
-echo 10 10 10 10 10 10 10 10 10 10 >> ${dir}/input.txt
+echo 1 757121 500 70 2 1 20 0 $i 10  >> ${dir}/input.txt
+echo 25 75 >> ${dir}/input.txt
 #echo $i >> evalCpG.txt
 #echo -n "   " >> evalCpG.txt
 echo $i
@@ -280,13 +280,13 @@ printf "" > matchApp.txt
 #echo "var"  "u"   "v"    "weight "  >> weight.txt
 
 
-for i in $(seq 30 2 120)
+for i in $(seq 30 2 180)
 do
 printf "" > ${dir}/eval.txt
 echo threshold  abdncError  methylCallError TP  FN  FP >> ${dir}/eval.txt
 printf "" > ${dir}/input.txt
 
-echo 1 757121 230 70 10 1 20 0 $i 10  >> ${dir}/input.txt
+echo 1 757121 500 70 10 1 20 0 $i 10  >> ${dir}/input.txt
 echo 10 10 10 10 10 10 10 10 10 10 >> ${dir}/input.txt
 echo $i
 
@@ -344,13 +344,13 @@ printf "" > matchApp.txt
 #echo "var"  "u"   "v"    "weight "  >> weight.txt
 
 
-for i in $(seq 30 2 120)
+for i in $(seq 30 2 180)
 do
 printf "" > ${dir}/eval.txt
 echo threshold  abdncError  methylCallError TP  FN  FP >> ${dir}/eval.txt
 printf "" > ${dir}/input.txt
 
-echo 1 757121 230 70 4 1 20 0 $i 10  >> ${dir}/input.txt
+echo 1 757121 500 70 4 1 20 0 $i 10  >> ${dir}/input.txt
 echo 15 15 35 35 >> ${dir}/input.txt
 #echo $i >> evalCpG.txt
 #echo -n "   " >> evalCpG.txt
@@ -412,13 +412,13 @@ printf "" > matchApp.txt
 #echo "var"  "u"   "v"    "weight "  >> weight.txt
 
 
-for i in $(seq 30 2 120)
+for i in $(seq 30 2 180)
 do
 printf "" > ${dir}/eval.txt
 echo threshold  abdncError  methylCallError TP  FN  FP >> ${dir}/eval.txt
 printf "" > ${dir}/input.txt
 
-echo 1 757121 230 70 2 1 20 0 $i 10  >> ${dir}/input.txt
+echo 1 757121 500 70 2 1 20 0 $i 10  >> ${dir}/input.txt
 echo 25 75 >> ${dir}/input.txt
 #echo $i >> evalCpG.txt
 #echo -n "   " >> evalCpG.txt

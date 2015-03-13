@@ -53,14 +53,14 @@ printf "" > match.txt
 printf "" > matchApp.txt
 
 
-for i in $(seq 5 3 200)
+for i in $(seq 5 3 230)
 do
 
 printf "" > ${dir}/eval.txt
 echo threshold  abdncError  methylCallError TP  FN  FP >> ${dir}/eval.txt
 printf "" > ${dir}/input.txt
 
-echo 1 757121 500 $i 10 1 20 0 80 10 >> ${dir}/input.txt
+echo 1 757121 230 $i 10 1 20 0 80 10 >> ${dir}/input.txt
 echo 10 10 10 10 10 10 10 10 10 10 >> ${dir}/input.txt
 #echo $i >> evalReadLength.txt
 #echo -n "   " >> evalReadLength.txt
@@ -120,14 +120,14 @@ printf "" > match.txt
 printf "" > matchApp.txt
 
 
-for i in $(seq 5 3 200)
+for i in $(seq 5 3 230)
 do
 
 printf "" > ${dir}/eval.txt
 echo threshold  abdncError  methylCallError TP  FN  FP >> ${dir}/eval.txt
 printf "" > ${dir}/input.txt
 
-echo 1 757121 500 $i 4 1 20 0 80 10 >> ${dir}/input.txt
+echo 1 757121 230 $i 4 1 20 0 80 10 >> ${dir}/input.txt
 echo 15 15 35 35 >> ${dir}/input.txt
 #echo $i >> evalReadLength.txt
 #echo -n "   " >> evalReadLength.txt
@@ -191,14 +191,14 @@ printf "" > match.txt
 printf "" > matchApp.txt
 
 
-for i in $(seq 5 3 200)
+for i in $(seq 5 3 230)
 do
 
 printf "" > ${dir}/eval.txt
 echo threshold  abdncError  methylCallError TP  FN  FP >> ${dir}/eval.txt
 printf "" > ${dir}/input.txt
 
-echo 1 757121 500 $i 2 1 20 0 80 10 >> ${dir}/input.txt
+echo 1 757121 230 $i 2 1 20 0 80 10 >> ${dir}/input.txt
 echo 25 75 >> ${dir}/input.txt
 #echo $i >> evalReadLength.txt
 #echo -n "   " >> evalReadLength.txt
@@ -267,14 +267,14 @@ printf "" > match.txt
 printf "" > matchApp.txt
 
 
-for i in $(seq 5 3 200)
+for i in $(seq 5 3 230)
 do
 
 printf "" > ${dir}/eval.txt
 echo threshold  abdncError  methylCallError TP  FN  FP >> ${dir}/eval.txt
 printf "" > ${dir}/input.txt
 
-echo 1 757121 500 $i 10 1 20 0 80 10 >> ${dir}/input.txt
+echo 1 757121 230 $i 10 1 20 0 80 10 >> ${dir}/input.txt
 echo 10 10 10 10 10 10 10 10 10 10 >> ${dir}/input.txt
 #echo $i >> evalReadLength.txt
 #echo -n "   " >> evalReadLength.txt
@@ -335,14 +335,14 @@ printf "" > match.txt
 printf "" > matchApp.txt
 
 
-for i in $(seq 5 3 200)
+for i in $(seq 5 3 230)
 do
 
 printf "" > ${dir}/eval.txt
 echo threshold  abdncError  methylCallError TP  FN  FP >> ${dir}/eval.txt
 printf "" > ${dir}/input.txt
 
-echo 1 757121 500 $i 4 1 20 0 80 10 >> ${dir}/input.txt
+echo 1 757121 230 $i 4 1 20 0 80 10 >> ${dir}/input.txt
 echo 15 15 35 35 >> ${dir}/input.txt
 #echo $i >> evalReadLength.txt
 #echo -n "   " >> evalReadLength.txt
@@ -406,14 +406,14 @@ printf "" > match.txt
 printf "" > matchApp.txt
 
 
-for i in $(seq 5 3 200)
+for i in $(seq 5 3 230)
 do
 
 printf "" > ${dir}/eval.txt
 echo threshold  abdncError  methylCallError TP  FN  FP >> ${dir}/eval.txt
 printf "" > ${dir}/input.txt
 
-echo 1 757121 500 $i 2 1 20 0 80 10 >> ${dir}/input.txt
+echo 1 757121 230 $i 2 1 20 0 80 10 >> ${dir}/input.txt
 echo 25 75 >> ${dir}/input.txt
 #echo $i >> evalReadLength.txt
 #echo -n "   " >> evalReadLength.txt

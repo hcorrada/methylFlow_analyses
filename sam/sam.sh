@@ -75,7 +75,7 @@ if [ "$4" == 1 ]
 then
 echo "SAM input MethylFlow"
 #samtools view -Shu $2 | samtools sort - -o test.sorted | samtools view - -h -o test.sorted.sam
-${mf} -i $2 -o ${dir} -sam -s 1 -start $5 -end $6
+${mf} -i $2 -o ${dir} -sam -s 1 -chr 1 -start $5 -end $6
 
 
 elif [ "$4" == 0 ]
@@ -117,7 +117,7 @@ if [ "$4" == 1 ]
 then
 echo "SAM input MethylFlow"
 #samtools view -Shu $2 | samtools sort - -o test.sorted | samtools view - -h -o test.sorted.sam
-${mf} -i $2 -o ${dir} -sam  -s 1 -start $5 -end $6
+${mf} -i $2 -o ${dir} -sam -s 1 -chr 1 -start $5 -end $6
 
 elif ["$3" == 0 ]
 then

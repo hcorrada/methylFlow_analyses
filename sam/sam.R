@@ -3,7 +3,9 @@
 
 ### par1 = input directory
 
-# data[1] = "SRR1015705-10006910-15008000"
+
+#data[1] = "SRR1020537-3006910-15008000"
+
 library("devtools")
 path = "~/Projects/methylFlow/src/methylFlow/methylFlowr"
 load_all(path)
@@ -39,7 +41,8 @@ objs <- lapply(seq(len=1), function(i) {
     curdir <- file.path(dir,datadir)
     read.methylflow.dir(resultdir,has.header=TRUE)
 })
-names(objs) <- file.path(dir,datadir)
+#names(objs) <- file.path(dir,datadir)
+names(objs) <- data[1]
 
 objs <- lapply(objs, processMethylpats)
 filteredObjs <- lapply(objs, mfFilterBy, minComponentCoverage=50, minComponentWidth=86)

@@ -107,6 +107,24 @@ legend("bottomright", c("cpg_loss","region_loss"), col=c("blue", "red"), pch=1)
 dev.off()
 
 
+pdf(file.path(figdir,"meth_pct_3.pdf"), height=3, width=9)
+mypar(1,3)
+
+for (i in c(4,5,6)) {
+    gr <- betaGR[[i]]
+    plot(gr$rawBeta,gr$estimatedBeta,
+    bty='l',
+    main=names(filteredObjs)[i],
+    ylab="pattern methyl Percentage",
+    xlab="region methyl Precentage",
+    cex = 0.5,
+    cex.lab=2)
+}
+
+
+dev.off()
+
+
 
 err <- c()
 for (i in seq(along=betaGR)) {
