@@ -13,8 +13,8 @@ library("RColorBrewer")
 
 
 start= 0.1
-step= 0.05
-end = 0.4
+step= 0.1
+end = 0.9
 
 count = (end - start) / step + 1
 
@@ -146,7 +146,7 @@ for (i in 1:ntrees) {
   j = step * (i-1) + start
   print(j)
   
-  sel <- which(CpGAvg$threshold == j)
+  sel <- which(abs(CpGAvg$threshold - j) < 0.0001)
   points(CpGAvg$var[sel],
          CpGAvg$abdncError[sel],
          col = mypalette[i],
@@ -214,7 +214,7 @@ for (i in 1:ntrees) {
   j = step * (i-1) + start
   print(j)
   
-  sel <- which(CpGAvg$threshold == j)
+  sel <- which(abs(CpGAvg$threshold - j) < 0.0001)
   points(CpGAvg$var[sel],
          CpGAvg$methylCallError[sel],
          col = mypalette[i],
@@ -280,7 +280,7 @@ for (i in 1:ntrees) {
   j = step * (i-1) + start
   print(j)
   
-  sel <- which(CpGAvg$threshold == j)
+  sel <- which(abs(CpGAvg$threshold - j) < 0.0001)
   lines(CpGAvg$var[sel],
         CpGAvg$TP[sel],
         col = mypalette[i],
@@ -359,7 +359,7 @@ for (i in 1:ntrees) {
   j = step * (i-1) + start
   print(j)
   
-  sel <- which(CpGAvg$threshold == j)
+  sel <- which(abs(CpGAvg$threshold - j) < 0.0001)
   lines(CpGAvg$var[sel],
         sensitivity[sel],
         col = mypalette[i],
@@ -434,7 +434,7 @@ for (i in 1:ntrees) {
   j = step * (i-1) + start
   print(j)
   
-  sel <- which(CpGAvg$threshold == j)
+  sel <- which(abs(CpGAvg$threshold - j) < 0.0001)
   lines(CpGAvg$var[sel],
         precision[sel],
         col = mypalette[i],
@@ -505,7 +505,7 @@ for (i in 1:ntrees) {
   j = step * (i-1) + start
   print(j)
   
-  sel <- which(CpGAvg$threshold == j)
+  sel <- which(abs(CpGAvg$threshold - j) < 0.0001)
   lines(CpGAvg$var[sel],
         FDR[sel],
         col = mypalette[i],
@@ -591,7 +591,7 @@ for (i in 1:ntrees) {
   j = step * (i-1) + start
   print(j)
   
-  sel <- which(CpGAvg$threshold == j)
+  sel <- which(abs(CpGAvg$threshold - j) < 0.0001)
   lines(CpGAvg$var[sel],
         FP[sel],
         col = mypalette[i],

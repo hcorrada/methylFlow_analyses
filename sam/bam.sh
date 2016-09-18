@@ -42,6 +42,13 @@ echo $3
 echo $4
 echo $5
 echo $6
+echo $7
+
+
+chr=$5
+start=$6
+end=$7
+
 
 
 pwd=$(pwd)
@@ -60,14 +67,40 @@ samEvaluate="${MF_INSTALL_DIR}/bin/samEvaluation"
 subdir=$3
 
 
-if [ "$1" == 0 ]
-then
-echo "Auto lambda"
+
 dir="${pwd}/${subdir}"
 mkdir ${dir}
 
 
-cd ${dir}
+samtools view -hb -F 16 $2 > ${dir}/strandf.bam
+
+
+samtools sort ${dir}/strandf.bam  ${dir}/sorted.1
+echo "samtools sort 1 done"
+
+
+#need indexed bam file to do select a region"
+
+samtools index ${dir}/sorted.1.bam
+
+echo "samtools index done"
+
+
+samtools view -h -o ${dir}/sorted_region_${start}.1.bam  ${dir}/sorted.1.bam $chr:$start-$end
+
+
+echo "samtools extract region done"
+
+
+echo "number of reads for sorted.1"
+samtools view -F 0x904 -c ${dir}/sorted_region_${start}.1.bam
+
+
+file1="${dir}/sorted_region_${start}.1.bam"
+samtools view -h -o ${dir}/out.sam $file1
+
+
+#cd ${dir}
 
 #cd /cbcb/project-scratch/fdorri/Code/methylFlow/testing/sam/auto/
 echo -n "" > methylPercentageRead.txt
@@ -76,13 +109,17 @@ echo -n "" > methylPercentageEstimated.txt
 
 #change directory to /cbcb/project-scratch/fdorri/Code/methylFlow/testing/
 #cd /cbcb/project-scratch/fdorri/Code/methylFlow/testing/
+if [ "$1" == 0 ]
+then
+echo "Auto lambda"
 
 if [ "$4" == 1 ]
 then
 echo "SAM input MethylFlow"
+
 echo 
 #samtools view -Shu $2 | samtools sort - -o test.sorted | samtools view - -h -o test.sorted.sam
-${mf} -i $2 -o ${dir} -sam -s 1 -chr $5 -start $6 -end $7
+${mf} -i ${dir}/out.sam -o ${dir} -sam -s 1 -chr $5 -start $6 -end $7
 echo "start= $6"
 
 echo "end= $7"

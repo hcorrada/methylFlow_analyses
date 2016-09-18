@@ -36,7 +36,7 @@ outdir_region=$3
 
 conditions="N T"
 subjects=$(seq 4 6)
-chrs=$(seq 13 13)
+chrs=$(seq 6 9)
 
 for subject in ${subjects}; do
     echo subject: $subject

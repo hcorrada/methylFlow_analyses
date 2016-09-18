@@ -12,11 +12,13 @@
 
 
 ## input file
-##>> chr >> startDNA >> dnaLength >> readLength >> HapNum >> freqFlag >> coverage >> error >> dataFlag >> corrDist ;
+##>> chr >> startDNA >> dnaLength >> readLength >> HapNum >> freqFlag >> coverage >> error >> dataFlag >> cpgNum >> corrDist ;
 
-# dataFlag = 0  >>> read CpG sites from file
+# dataFlag = 0  >>> read CpG sites from file(name of the file is at the end of file ( third line))
 # dataFlag > 0 >>>> dataFlag equals the number of cpg sites
 # dataFlag < 0 >>> read the data from rest of the file
+
+#cpgNum  >>>> Number of cpg or number of lines to be read from file
 
 # freqFlag = 0 >>> randomly choose the frequency of each pattern
 # freqFlag = 1 >>> read the frequency of patterns from rest of the file(second line)
@@ -29,9 +31,13 @@ mfSimulate="${MF_INSTALL_DIR}/bin/mfSimulate"
 mfEvaluate="${MF_INSTALL_DIR}/bin/mfEvaluation"
 avgEvaluate="${MF_INSTALL_DIR}/bin/avgEvaluation"
 
+start=11006910
+end=15008000
+length=$(($end - $start - 1))
 
 
-if [ "$1" == 1 ];
+
+if [ "$1" == 0 ];
 then
 
 if [ "$2" == 2 ];
@@ -56,7 +62,7 @@ printf "" > match.txt
 printf "" > matchApp.txt
 
 
-for i in $(seq 5 3 200)
+for i in $(seq 5 3 50)
 do
 #printf "" > /cbcb/project-scratch/fdorri/Code/methylFlow/testing/coverage/hard/eval.txt
 #echo threshold  abdncError  methylCallError TP  FN  FP >> /cbcb/project-scratch/fdorri/Code/methylFlow/testing/coverage/hard/eval.txt
@@ -65,10 +71,12 @@ do
 printf "" > ${dir}/eval.txt
 echo threshold  abdncError  methylCallError TP  FN  FP >> ${dir}/eval.txt
 printf "" > ${dir}/input.txt
-echo 1 757121 230 70 10 1 $i 0 80 1 >> ${dir}/input.txt
+echo 1 $start $length 100 10 1 $i 0 0 100 20 >> ${dir}/input.txt
 echo 10 10 10 10 10 10 10 10 10 10 >> ${dir}/input.txt
+echo "/Users/faezeh/Projects/methylFlow/exps/sam/SRR1015434-11006910-15008000/cpgs.tsv" >> ${dir}/input.txt
 
-#echo 1 757121 230 70 10 1 $i 0 80 1 >> /cbcb/project-scratch/fdorri/Code/methylFlow/testing/coverage/hard/input.txt
+
+#echo 1 757121 1000 70 10 1 $i 0 80 1 >> /cbcb/project-scratch/fdorri/Code/methylFlow/testing/coverage/hard/input.txt
 #echo 10 10 10 10 10 10 10 10 10 10 >> /cbcb/project-scratch/fdorri/Code/methylFlow/testing/coverage/hard/input.txt
 #echo $i >> evalCoverage.txt
 #printf "   " >> evalCoverage.txt
@@ -106,7 +114,7 @@ ${mf} -i ${dir}/shortRead.txt -o ${dir} -l 1 -s 1 -chr 1
 
 echo "EvaluateCoverage"
 #../build/evaluation/mfEvaluation /cbcb/project-scratch/fdorri/Code/methylFlow/testing/coverage/hard /cbcb/project-scratch/fdorri/Code/methylFlow/testing/coverage/hard 757121 757353 $i
-${mfEvaluate} ${dir} ${dir} 757121 757353 $i
+${mfEvaluate} ${dir} ${dir} $start $end $i
 
 done
 echo "avgEval Start"
@@ -141,14 +149,15 @@ printf "" > match.txt
 printf "" > matchApp.txt
 
 
-for i in $(seq 5 3 200)
+for i in $(seq 5 3 50)
 do
 
 printf "" > ${dir}/eval.txt
 echo threshold  abdncError  methylCallError TP  FN  FP >> ${dir}/eval.txt
 printf "" > ${dir}/input.txt
-echo 1 757121 230 70 4 1 $i 0 80 1 >> ${dir}/input.txt
+echo 1 $start $length 100 4 1 $i 0 0 100 20 >> ${dir}/input.txt
 echo 15 15 35 35 >> ${dir}/input.txt
+echo "/Users/faezeh/Projects/methylFlow/exps/sam/SRR1015434-11006910-15008000/cpgs.tsv" >> ${dir}/input.txt
 
 
 echo $i
@@ -171,7 +180,7 @@ echo "MethylFlowCoverage"
 ${mf} -i ${dir}/shortRead.txt -o ${dir} -s 1 -chr 1
 
 echo "EvaluateCoverage"
-${mfEvaluate} ${dir} ${dir} 757121 757353 $i
+${mfEvaluate} ${dir} ${dir} $start $end $i
 
 done
 echo "avgEval Start"
@@ -206,14 +215,15 @@ printf "" > match.txt
 printf "" > matchApp.txt
 
 
-for i in $(seq 5 3 200)
+for i in $(seq 5 3 50)
 do
 
 printf "" > ${dir}/eval.txt
 echo threshold  abdncError  methylCallError TP  FN  FP >> ${dir}/eval.txt
 printf "" > ${dir}/input.txt
-echo 1 757121 230 70 2 1 $i 0 80 1 >> ${dir}/input.txt
+echo 1 $start $length 100 2 1 $i 0 0 100 20 >> ${dir}/input.txt
 echo 25 75 >> ${dir}/input.txt
+echo "/Users/faezeh/Projects/methylFlow/exps/sam/SRR1015434-11006910-15008000/cpgs.tsv" >> ${dir}/input.txt
 
 
 echo $i
@@ -235,7 +245,7 @@ echo "MethylFlowCoverage"
 ${mf} -i ${dir}/shortRead.txt -o ${dir} -s 1 -chr 1
 
 echo "EvaluateCoverage"
-${mfEvaluate} ${dir} ${dir} 757121 757353 $i
+${mfEvaluate} ${dir} ${dir} $start $end $i
 
 done
 echo "avgEval Start"
@@ -253,7 +263,7 @@ fi
 
 
 
-elif [ "$1" == 0 ];
+elif [ "$1" == 1 ];
 then
 
 if [ "$2" == 2 ];
@@ -283,7 +293,7 @@ do
 printf "" > ${dir}/eval.txt
 echo threshold  abdncError  methylCallError TP  FN  FP >> ${dir}/eval.txt
 printf "" > ${dir}/input.txt
-echo 1 757121 500 70 10 1 $i 0 80 10 >> ${dir}/input.txt
+echo 1 757121 1000 70 10 1 $i 0 50 10 >> ${dir}/input.txt
 echo 10 10 10 10 10 10 10 10 10 10 >> ${dir}/input.txt
 
 
@@ -306,7 +316,7 @@ echo "MethylFlowCoverage"
 ${mf} -i ${dir}/shortRead.txt -o ${dir} -s 1 -chr 1
 
 echo "EvaluateCoverage"
-${mfEvaluate} ${dir} ${dir} 757121 757353 $i
+${mfEvaluate} ${dir} ${dir} 757121 758121 $i
 
 done
 echo "avgEval Start"
@@ -338,13 +348,13 @@ printf "" > match.txt
 printf "" > matchApp.txt
 
 
-for i in $(seq 5 3 200)
+for i in $(seq 5 3 120)
 do
 
 printf "" > ${dir}/eval.txt
 echo threshold  abdncError  methylCallError TP  FN  FP >> ${dir}/eval.txt
 printf "" > ${dir}/input.txt
-echo 1 757121 500 70 4 1 $i 0 80 10 >> ${dir}/input.txt
+echo 1 757121 1000 70 4 1 $i 0 50 10 >> ${dir}/input.txt
 echo 15 15 35 35 >> ${dir}/input.txt
 
 
@@ -367,7 +377,7 @@ echo "MethylFlowCoverage"
 ${mf} -i ${dir}/shortRead.txt -o ${dir} -s 1 -chr 1
 
 echo "EvaluateCoverage"
-${mfEvaluate} ${dir} ${dir} 757121 757353 $i
+${mfEvaluate} ${dir} ${dir} 757121 758121 $i
 
 done
 echo "avgEval Start"
@@ -407,7 +417,7 @@ do
 printf "" > ${dir}/eval.txt
 echo threshold  abdncError  methylCallError TP  FN  FP >> ${dir}/eval.txt
 printf "" > ${dir}/input.txt
-echo 1 757121 500 70 2 1 $i 0 80 10 >> ${dir}/input.txt
+echo 1 757121 1000 70 2 1 $i 0 50 10 >> ${dir}/input.txt
 echo 25 75 >> ${dir}/input.txt
 
 
@@ -433,7 +443,7 @@ echo ${dir}
 ${mf} -i ${dir}/shortRead.txt -o ${dir} -s 1 -chr 1
 
 echo "EvaluateCoverage"
-${mfEvaluate} ${dir} ${dir} 757121 757353 $i
+${mfEvaluate} ${dir} ${dir} 757121 758121 $i
 
 done
 echo "avgEval Start"

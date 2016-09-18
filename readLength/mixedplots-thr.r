@@ -6,9 +6,9 @@
 library("RColorBrewer")
 #library(ggplot2)
 
-start= 45
-step= 100
-end = 245
+start= 0.4
+step= 0.2
+end = 0.8
 
 count = (end - start) / step + 1
 
@@ -48,12 +48,12 @@ print(wdir)
 
 
 #dir <- paste(wdir, "/allInOneFig/", sep="")
-dir <- file.path(wdir, "mixed")
+dir <- file.path(wdir, "mixed_thr_")
 
 ####### different plots for readLength ##############################################
-sel_s  <- with(readLengthAvg_simple,which(threshold %in% c("0.3","0.4","0.5","0.6","0.7","0.8")) && which(var %in% c("45", "145", "245", "345")))
-sel_m  <- with(readLengthAvg_moderate,which(threshold %in% c("0.3","0.4","0.5","0.6","0.7","0.8")) && which(var %in% c("45", "145", "245", "345")))
-sel_h  <- with(readLengthAvg_hard,which(threshold %in% c("0.3","0.4","0.5","0.6","0.7","0.8")) && which(var %in% c("45", "145", "245", "345")))
+sel_s  <- with(readLengthAvg_simple,which(threshold %in% c("0.4","0.6","0.8")))
+sel_m  <- with(readLengthAvg_moderate,which(threshold %in% c("0.4","0.6","0.8")))
+sel_h  <- with(readLengthAvg_hard,which(threshold %in% c("0.4","0.6","0.8")))
 
 
 xrange_hard <- range(readLengthAvg_hard$methylCallError[sel_h])
@@ -103,14 +103,14 @@ for (i in 1:ntrees) {
   j = step * (i-1) + start
   print(j)
   
-  sel <- which(abs(readLengthAvg_simple$var - j) < 0.0001)
+  sel <- which(abs(readLengthAvg_simple$threshold - j) < 0.0001)
   
 
-loess_fit <- loess(readLengthAvg_simple$abdncError[sel] ~ readLengthAvg_simple$methylCallError[sel], readLengthAvg_simple)
-lines(readLengthAvg_simple$methylCallError[sel], predict(loess_fit), col =  colors[i])
+#loess_fit <- loess(readLengthAvg_simple$abdncError[sel] ~ readLengthAvg_simple$methylCallError[sel], readLengthAvg_simple)
+#lines(readLengthAvg_simple$methylCallError[sel], predict(loess_fit), col =  colors[i])
 
-  points(readLengthAvg_simple$methylCallError[sel],
-         readLengthAvg_simple$abdncError[sel],
+  points(readLengthAvg_simple$methylCallError[sel[seq(1,length(sel),by=2)]],
+         readLengthAvg_simple$abdncError[sel[seq(1,length(sel),by=2)]],
          col = colors[i],
          pch = pchs[i],
          cex = 0.5
@@ -140,16 +140,14 @@ lines(readLengthAvg_simple$methylCallError[sel], predict(loess_fit), col =  colo
   # set up the plot
   plot(0, 0,
   pch = "",
-#yaxt='n',
-#ylab="",
-ylim = yrange_moderate,
+  #yaxt='n',
+  ylim = yrange_moderate,
   xlim = xrange_moderate,
   xlab="MethylCall Error",
-ylab="Abundance Error",
+  ylab="Abundance Error",
   # ylab="Abundance Error",
   cex.lab= 1.2,
   #     cex.axis = 0.5
-main="Read Length"
   )
   
   ltys = seq(1:ntrees)
@@ -161,31 +159,21 @@ main="Read Length"
       print(j)
       
   
-  sel <- which(abs(readLengthAvg_moderate$var - j) < 0.0001)
+  sel <- which(abs(readLengthAvg_moderate$threshold - j) < 0.0001)
   
-  loess_fit <- loess(readLengthAvg_moderate$abdncError[sel] ~ readLengthAvg_moderate$methylCallError[sel], readLengthAvg_moderate)
-  lines(readLengthAvg_moderate$methylCallError[sel], predict(loess_fit), col =  colors[i],lty=3)
+  #loess_fit <- loess(readLengthAvg_moderate$abdncError[sel] ~ readLengthAvg_moderate$methylCallError[sel], readLengthAvg_moderate)
+  #lines(readLengthAvg_moderate$methylCallError[sel], predict(loess_fit), col =  colors[i])
 
-  points(readLengthAvg_moderate$methylCallError[sel],
-         readLengthAvg_moderate$abdncError[sel],
+  points(readLengthAvg_moderate$methylCallError[sel[seq(1,length(sel),by=2)]],
+         readLengthAvg_moderate$abdncError[sel[seq(1,length(sel),by=2)]],
          col = colors[i],
          pch = pchs[i],
          cex = 0.5
          # type = "b",
          #   lty = 3,
-         #lwd = 2.0
+         #lwd = 1.0
   )
   }
-legend("topright", legend= c(50,150,250),
-#, "Moderate, thr = 0.2","Moderate, thr = 0.4","Moderate, thr = 0.6", "Moderate, thr = 0.8","Hard, thr = 0.2","Hard, thr = 0.4","Hard, thr = 0.6","Hard, thr = 0.8"
-#title = "thresholds",
-pch = rep(pchs,3),
-col = colors[1:ntrees],
-cex = 0.7,
-pt.cex = 0.7,
-lty = 3
-#lwd= 2.0
-)
   
   dev.off()
   
@@ -208,11 +196,11 @@ lty = 3
   # set up the plot
   plot(0, 0,
   pch = "",
-#yaxt='n',
+  #yaxt='n',
   ylim = yrange_hard,
   xlim = xrange_hard,
   xlab="MethylCall Error",
-#ylab="Abundance Error",
+  ylab="Abundance Error",
   # ylab="Abundance Error",
   cex.lab= 1.2,
   #     cex.axis = 0.5
@@ -228,13 +216,13 @@ lty = 3
       print(j)
       
   
-  sel <- which(abs(readLengthAvg_hard$var - j) < 0.0001)
+  sel <- which(abs(readLengthAvg_hard$threshold - j) < 0.0001)
   
-  loess_fit <- loess(readLengthAvg_hard$abdncError[sel] ~ readLengthAvg_hard$methylCallError[sel], readLengthAvg_hard)
-  lines(readLengthAvg_hard$methylCallError[sel], predict(loess_fit), col =  colors[i], lty=3)
+  #loess_fit <- loess(readLengthAvg_hard$abdncError[sel] ~ readLengthAvg_hard$methylCallError[sel], readLengthAvg_hard)
+  #lines(readLengthAvg_hard$methylCallError[sel], predict(loess_fit), col =  colors[i])
  
-  points(readLengthAvg_hard$methylCallError[sel],
-            readLengthAvg_hard$abdncError[sel],
+  points(readLengthAvg_hard$methylCallError[sel[seq(1,length(sel),by=2)]],
+            readLengthAvg_hard$abdncError[sel[seq(1,length(sel),by=2)]],
             col = colors[i],
             pch = pchs[i],
             cex = 0.5
@@ -243,7 +231,7 @@ lty = 3
             #    lwd = 1.0
   )
   }
-legend("topright", legend= c(seq(start,end,by=step)),
+legend("topright", legend= c("thr = 0.4","thr = 0.6","thr = 0.8"),
 #, "Moderate, thr = 0.2","Moderate, thr = 0.4","Moderate, thr = 0.6", "Moderate, thr = 0.8","Hard, thr = 0.2","Hard, thr = 0.4","Hard, thr = 0.6","Hard, thr = 0.8"
 #title = "thresholds",
 pch = rep(pchs,3),

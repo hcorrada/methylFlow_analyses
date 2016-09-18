@@ -11,9 +11,9 @@
 
 library("RColorBrewer")
 
-start= 0.1
-step= 0.05
-end = 0.4
+start= 0.2
+step= 0.2
+end = 0.8
 
 count = (end - start) / step + 1
 
@@ -136,7 +136,7 @@ for (i in 1:ntrees) {
     j = step * (i-1) + start
     print(j)
     
-    sel <- which(coverageAvg$threshold == j)
+    sel <- which(abs(coverageAvg$threshold - j) < 0.0001)
     points(coverageAvg$var[sel],
     coverageAvg$abdncError[sel],
     col = mypalette[i],
@@ -204,7 +204,7 @@ for (i in 1:ntrees) {
     j = step * (i-1) + start
     print(j)
     
-    sel <- which(coverageAvg$threshold == j)
+    sel <- which(abs(coverageAvg$threshold - j) < 0.0001)
     points(coverageAvg$var[sel],
     coverageAvg$methylCallError[sel],
     col = mypalette[i],
@@ -270,7 +270,7 @@ for (i in 1:ntrees) {
     j = step * (i-1) + start
     print(j)
     
-    sel <- which(coverageAvg$threshold == j)
+    sel <- which(abs(coverageAvg$threshold - j) < 0.0001)
     lines(coverageAvg$var[sel],
     coverageAvg$TP[sel],
     col = mypalette[i],
@@ -349,7 +349,7 @@ for (i in 1:ntrees) {
     j = step * (i-1) + start
     print(j)
     
-    sel <- which(coverageAvg$threshold == j)
+    sel <- which(abs(coverageAvg$threshold - j) < 0.0001)
     lines(coverageAvg$var[sel],
     sensitivity[sel],
     col = mypalette[i],
@@ -424,7 +424,7 @@ for (i in 1:ntrees) {
     j = step * (i-1) + start
     print(j)
     
-    sel <- which(coverageAvg$threshold == j)
+    sel <- which(abs(coverageAvg$threshold - j) < 0.0001)
     lines(coverageAvg$var[sel],
     precision[sel],
     col = mypalette[i],
@@ -495,7 +495,7 @@ for (i in 1:ntrees) {
     j = step * (i-1) + start
     print(j)
     
-    sel <- which(coverageAvg$threshold == j)
+    sel <- which(abs(coverageAvg$threshold - j) < 0.0001)
     lines(coverageAvg$var[sel],
     FDR[sel],
     col = mypalette[i],
@@ -542,7 +542,7 @@ par(mar= c(5,5,2,2))
 
 agg = aggregate(mcfCoverage$minCostFlow, list(coverage = mcfCoverage$var), FUN =  mean)
 
-plot(agg, ylab="Min Cost Flow Error", cex.lab = 2, cex.axis = 1.5, pch = 19, col= "blue")
+plot(agg, ylab="Min Cost Flow Error", ylim=c(0,1), cex.lab = 2, cex.axis = 1.5, pch = 19, col= "blue")
 
 dev.off()
 
@@ -581,7 +581,7 @@ for (i in 1:ntrees) {
     j = step * (i-1) + start
     print(j)
     
-    sel <- which(coverageAvg$threshold == j)
+    sel <- which(abs(coverageAvg$threshold - j) < 0.0001)
     lines(coverageAvg$var[sel],
     FP[sel],
     col = mypalette[i],

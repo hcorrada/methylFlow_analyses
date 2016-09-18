@@ -31,7 +31,7 @@ print(resultdir)
 pd <- data.frame(subject=c("1020523", "1020509", "1015705", "1015434"), status=c("wild B-cell","wild B-cell", "KSL", "KSL"))
 j <- "3"
 
-pd$dirname=sprintf("SRR%s-3100000-15000000", pd$subject)
+pd$dirname=sprintf("SRR%s-bam", pd$subject)
 pd$name=sprintf("SRR%s", pd$subject)
 #pd$dirname = datadir
 objs <- lapply(seq(len=nrow(pd)), function(i) {
@@ -45,7 +45,7 @@ filteredObjs <- lapply(objs, mfFilterBy, minComponentCoverage=50, minComponentWi
 names(filteredObjs) <- names(objs)
 
 
-figdir <- file.path(resultdir,"B-cell")
+figdir <- file.path(resultdir,"B-cell-new")
 
 if (!file.exists(figdir)) dir.create(figdir)
 

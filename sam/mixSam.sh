@@ -5,10 +5,10 @@
 
 #sh mixSam.sh ~/Projects/methylFlow/data/singleCell/sam/sorted.SRR1769174_1.fastq_bismark_bt2_pe.bam ~/Projects/methylFlow/data/singleCell/sam/sorted.SRR1769202_1.fastq_bismark_bt2_pe.bam bamMix 1 4 3 3000 15000000
 
-#sh mixSam.sh /Users/faezeh/Projects/methylFlow/data/singleCell/sam/cce_2i_120h.4/chr3/out.bam /Users/faezeh/Projects/methylFlow/data/singleCell/sam/cce.4/chr3/out.bam  poolMix 1 1 3 3019574 3019795
+#sh mixSam.sh /Users/faezeh/Projects/methylFlow/data/singleCell/sam/cce_2i_120h.4_1/chr3/out.bam /Users/faezeh/Projects/methylFlow/data/singleCell/sam/cce.4_1/chr3/out.bam  poolMix 1 1 3 3019574 3019795
 
-#sh mixSam.sh /Users/faezeh/Projects/methylFlow/data/singleCell/sam/wgbs/chr3/SRR1248477.fastq_bismark_bt2.bam /Users/faezeh/Projects/methylFlow/data/singleCell/sam/wgbs/chr3/SRR1248457.fastq_bismark_bt2.bam  wgbsMix57-77 1 1 3 30000 30000000
-
+#sh mixSam.sh /Users/faezeh/Projects/methylFlow/data/singleCell/wgbs/lane7_RSC9N_BS_merged_L007_R1_val_1.fq.gz_unmapped_reads_1.fq.gz_bismark_bt2.deduplicated.bam.sorted.bam.3.3000000.10000000.bam  /Users/faezeh/Projects/methylFlow/data/singleCell/wgbs/lane8_RSC9N_BI_merged_L008_R1_val_1.fq.gz_unmapped_reads_1.fq.gz_bismark_bt2.deduplicated.bam.sorted.bam.3.3000000.10000000.bam bulkMix_fcomplete 1 1 3 3000000 10000000
+#sh mixSam.sh  /Users/faezeh/Projects/methylFlow/exps/sam/lane7_1.bam /Users/faezeh/Projects/methylFlow/exps/sam/lane8_1.bam strand1Mix 1 1 3 3020500 3020937
 
 ### par1 = input file name 1
 ### par2 = input file name 2
@@ -72,13 +72,13 @@ if [ ! -f ${dir} ]
 then
 mkdir ${dir}
 fi
-#samtools view $1 chr${chr}:${start}-${end} > in1.bam
+samtools view -hb -f 16 $1 > ${dir}/strandf1.bam
 
-#samtools view $2 chr${chr}:${start}-${end} > in2.bam
+samtools view -hb -f 16 $2 > ${dir}/strandf2.bam
 
-samtools sort $1  ${dir}/sorted.1
+samtools sort ${dir}/strandf1.bam  ${dir}/sorted.1
 echo "samtools sort 1 done"
-samtools sort $2  ${dir}/sorted.2
+samtools sort ${dir}/strandf2.bam  ${dir}/sorted.2
 echo "samtools sort 2 done"
 
 
@@ -110,8 +110,12 @@ file1="${dir}/sorted_region_${start}.1.bam"
 file2="${dir}/sorted_region_${start}.2.bam"
 
 #: <<'end_long_comment'
+echo "BIA INJA"
+echo "$ratio1"
+echo "$ratio2"
 
-if [ "$ratio1" == 1 ]
+
+if [ $ratio2 -gt 1 ]
 then
 for i in $(seq 1 1 $ratio2)
 do
@@ -130,7 +134,7 @@ done
 
 fi
 
-if [ "$ratio2" == 1 ]
+if [ $ratio1 -gt 1 ]
 then
 for i in $(seq 1 1 $ratio1)
 do
@@ -139,12 +143,28 @@ then
 cp $file2 ${dir}/out.bam
 fi
 
+
 echo "$i"
 echo "ratio2=1"
 mv ${dir}/out.bam ${dir}/temp.bam
 samtools merge ${dir}/out.bam $file1 ${dir}/temp.bam
 
 done
+
+fi
+
+
+
+if [ $ratio1 -eq 1 ] && [ $ratio2 -eq 1 ]
+then
+
+if [ ! -f ${dir}/out.bam ]
+then
+cp $file2 ${dir}/out.bam
+fi
+echo "ratio2=1"
+mv ${dir}/out.bam ${dir}/temp.bam
+samtools merge ${dir}/out.bam $file1 ${dir}/temp.bam
 
 fi
 

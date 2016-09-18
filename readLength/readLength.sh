@@ -11,11 +11,13 @@
 
 
 ## input file
-##>> chr >> startDNA >> dnaLength >> readLength >> HapNum >> freqFlag >> coverage >> error >> dataFlag >> corrDist ;
+##>> chr >> startDNA >> dnaLength >> readLength >> HapNum >> freqFlag >> coverage >> error >> dataFlag >> cpgNum >> corrDist ;
 
-# dataFlag = 0  >>> read CpG sites from file
+# dataFlag = 0  >>> read CpG sites from file(name of the file is at the end of file ( third line))
 # dataFlag > 0 >>>> dataFlag equals the number of cpg sites
 # dataFlag < 0 >>> read the data from rest of the file
+
+#cpgNum  >>>> Number of cpg or number of lines to be read from file
 
 # freqFlag = 0 >>> randomly choose the frequency of each pattern
 # freqFlag = 1 >>> read the frequency of patterns from rest of the file(second line)
@@ -27,6 +29,11 @@ mf="${MF_INSTALL_DIR}/bin/methylFlow"
 mfSimulate="${MF_INSTALL_DIR}/bin/mfSimulate"
 mfEvaluate="${MF_INSTALL_DIR}/bin/mfEvaluation"
 avgEvaluate="${MF_INSTALL_DIR}/bin/avgEvaluation"
+
+start=11006910
+end=15008000
+length=$(($end - $start - 1))
+
 
 if [ "$1" == 0 ];
 then
@@ -53,15 +60,16 @@ printf "" > match.txt
 printf "" > matchApp.txt
 
 
-for i in $(seq 5 3 230)
+for i in $(seq 5 20 500)
 do
 
 printf "" > ${dir}/eval.txt
 echo threshold  abdncError  methylCallError TP  FN  FP >> ${dir}/eval.txt
 printf "" > ${dir}/input.txt
 
-echo 1 757121 230 $i 10 1 20 0 80 10 >> ${dir}/input.txt
+echo 1 $start $length $i 10 1 20 0 0 100 20 >> ${dir}/input.txt
 echo 10 10 10 10 10 10 10 10 10 10 >> ${dir}/input.txt
+echo "/Users/faezeh/Projects/methylFlow/exps/sam/SRR1015434-11006910-15008000/cpgs.tsv" >> ${dir}/input.txt
 #echo $i >> evalReadLength.txt
 #echo -n "   " >> evalReadLength.txt
 
@@ -87,7 +95,7 @@ echo "MethylFlowCoverage"
 ${mf} -i ${dir}/shortRead.txt -o ${dir} -s 1 -chr 1
 
 echo "EvaluateCoverage"
-${mfEvaluate} ${dir} ${dir} 757121 757653 $i
+${mfEvaluate} ${dir} ${dir} $start $end $i
 
 done
 echo "avgEval Start"
@@ -120,15 +128,17 @@ printf "" > match.txt
 printf "" > matchApp.txt
 
 
-for i in $(seq 5 3 230)
+for i in $(seq 5 20 500)
 do
 
 printf "" > ${dir}/eval.txt
 echo threshold  abdncError  methylCallError TP  FN  FP >> ${dir}/eval.txt
 printf "" > ${dir}/input.txt
 
-echo 1 757121 230 $i 4 1 20 0 80 10 >> ${dir}/input.txt
+echo 1 $start $length $i 4 1 20 0 0 100 20 >> ${dir}/input.txt
 echo 15 15 35 35 >> ${dir}/input.txt
+echo "/Users/faezeh/Projects/methylFlow/exps/sam/SRR1015434-11006910-15008000/cpgs.tsv" >> ${dir}/input.txt
+
 #echo $i >> evalReadLength.txt
 #echo -n "   " >> evalReadLength.txt
 
@@ -154,7 +164,7 @@ echo "MethylFlowCoverage"
 ${mf} -i ${dir}/shortRead.txt -o ${dir} -s 1 -chr 1
 
 echo "EvaluateCoverage"
-${mfEvaluate} ${dir} ${dir} 757121 757653 $i
+${mfEvaluate} ${dir} ${dir} $start $end $i
 
 done
 echo "avgEval Start"
@@ -191,15 +201,17 @@ printf "" > match.txt
 printf "" > matchApp.txt
 
 
-for i in $(seq 5 3 230)
+for i in $(seq 5 20 500)
 do
 
 printf "" > ${dir}/eval.txt
 echo threshold  abdncError  methylCallError TP  FN  FP >> ${dir}/eval.txt
 printf "" > ${dir}/input.txt
 
-echo 1 757121 230 $i 2 1 20 0 80 10 >> ${dir}/input.txt
+echo 1 $start $length $i 2 1 20 0 0 100 20 >> ${dir}/input.txt
 echo 25 75 >> ${dir}/input.txt
+echo "/Users/faezeh/Projects/methylFlow/exps/sam/SRR1015434-11006910-15008000/cpgs.tsv" >> ${dir}/input.txt
+
 #echo $i >> evalReadLength.txt
 #echo -n "   " >> evalReadLength.txt
 
@@ -218,14 +230,15 @@ printf "" > ${dir}/match.txt
 
 
 
-echo "SimulateCoverage"
+
+echo "Simulate Coverage for "
 ${mfSimulate} ${dir}/input.txt ${dir}
 
 echo "MethylFlowCoverage"
 ${mf} -i ${dir}/shortRead.txt -o ${dir} -s 1 -chr 1
 
 echo "EvaluateCoverage"
-${mfEvaluate} ${dir} ${dir} 757121 757653 $i
+${mfEvaluate} ${dir} ${dir} $start $end $i
 
 done
 echo "avgEval Start"
@@ -274,7 +287,7 @@ printf "" > ${dir}/eval.txt
 echo threshold  abdncError  methylCallError TP  FN  FP >> ${dir}/eval.txt
 printf "" > ${dir}/input.txt
 
-echo 1 757121 230 $i 10 1 20 0 80 10 >> ${dir}/input.txt
+echo 1 757121 230 $i 10 1 20 0 15 10 >> ${dir}/input.txt
 echo 10 10 10 10 10 10 10 10 10 10 >> ${dir}/input.txt
 #echo $i >> evalReadLength.txt
 #echo -n "   " >> evalReadLength.txt
@@ -342,7 +355,7 @@ printf "" > ${dir}/eval.txt
 echo threshold  abdncError  methylCallError TP  FN  FP >> ${dir}/eval.txt
 printf "" > ${dir}/input.txt
 
-echo 1 757121 230 $i 4 1 20 0 80 10 >> ${dir}/input.txt
+echo 1 757121 230 $i 4 1 20 0 15 10 >> ${dir}/input.txt
 echo 15 15 35 35 >> ${dir}/input.txt
 #echo $i >> evalReadLength.txt
 #echo -n "   " >> evalReadLength.txt
@@ -413,7 +426,7 @@ printf "" > ${dir}/eval.txt
 echo threshold  abdncError  methylCallError TP  FN  FP >> ${dir}/eval.txt
 printf "" > ${dir}/input.txt
 
-echo 1 757121 230 $i 2 1 20 0 80 10 >> ${dir}/input.txt
+echo 1 757121 230 $i 2 1 20 0 15 10 >> ${dir}/input.txt
 echo 25 75 >> ${dir}/input.txt
 #echo $i >> evalReadLength.txt
 #echo -n "   " >> evalReadLength.txt

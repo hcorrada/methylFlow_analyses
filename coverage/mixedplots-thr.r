@@ -6,9 +6,9 @@
 library("RColorBrewer")
 #library(ggplot2)
 
-start= 5
-step=6
-end =17
+start= 0.4
+step= 0.2
+end = 0.8
 
 count = (end - start) / step + 1
 
@@ -19,7 +19,7 @@ wdir <- "/Users/faezeh/Projects/methylFlow/exps/coverage/"
 #data[1]= 1
 #wdir <- getwd();
 print(wdir)
-##### aading files ##################
+##### reading files ##################
 
   dir_hard <- paste(wdir,"hard-Auto/",sep="");
 
@@ -48,15 +48,15 @@ print(wdir)
 
 
 #dir <- paste(wdir, "/allInOneFig/", sep="")
-dir <- file.path(wdir, "mixed")
+dir <- file.path(wdir, "mixed_thr_")
 
 ####### different plots for coverage ##############################################
-sel_s  <- with(coverageAvg_simple,which(threshold %in% c("0.3","0.4","0.5","0.6","0.7","0.8")) && which(var %in% c("5", "11", "20")))
-sel_m  <- with(coverageAvg_moderate,which(threshold %in% c("0.3","0.4","0.5","0.6","0.7","0.8")) && which(var %in% c("5", "11", "20")))
-sel_h  <- with(coverageAvg_hard,which(threshold %in% c("0.3","0.4","0.5","0.6","0.7","0.8")) && which(var %in% c("5", "11", "20")))
+sel_s  <- with(coverageAvg_simple,which(threshold %in% c("0.4","0.6","0.8")))
+sel_m  <- with(coverageAvg_moderate,which(threshold %in% c("0.4","0.6","0.8")))
+sel_h  <- with(coverageAvg_hard,which(threshold %in% c("0.4","0.6","0.8")))
 
 
-xrange_hard <- range(coverageAvg_hard$methylCallError[sel_h])+0.1
+xrange_hard <- range(coverageAvg_hard$methylCallError[sel_h])
 xrange_moderate <- range(coverageAvg_moderate$methylCallError[sel_m])
 xrange_simple <- range(coverageAvg_simple$methylCallError[sel_s])
 
@@ -68,7 +68,7 @@ yrange_simple <- range(coverageAvg_simple$abdncError[sel_s])
 #### plot the abundance Error vs methylcall for simple
 
 print("plot abundance Error vs methylCall error vs different thresholds for simple run of coverage")
-pdf(paste(dir,"abdVmethylVthrVcoverage_Simple.pdf",sep=""), width =3, height =2.5, pointsize=8)
+pdf(paste(dir,"abdVmethylVthrVreadLenght_Simple.pdf",sep=""), width =3, height =2.5, pointsize=8)
 par(mar= c(5,5,2,2))
 
 # get the range for the x and y axis
@@ -103,29 +103,27 @@ for (i in 1:ntrees) {
   j = step * (i-1) + start
   print(j)
   
-  sel <- which(abs(coverageAvg_simple$var - j) < 0.0001)
+  sel <- which(abs(coverageAvg_simple$threshold - j) < 0.0001)
   
 
-loess_fit <- loess(coverageAvg_simple$abdncError[sel] ~ coverageAvg_simple$methylCallError[sel], coverageAvg_simple)
-#nls_fit <- nls(coverageAvg_simple$abdncError[sel] ~ a+b*(coverageAvg_simple$methylCallError[sel])^(-c), coverageAvg_simple, start=list(a=80,b=20,c=0.2))
-lines(coverageAvg_simple$methylCallError[sel], predict(loess_fit), col =  colors[i], lty=3)
-#lines(coverageAvg_simple$methylCallError[sel], predict(nls_fit), col =  colors[i])
+#loess_fit <- loess(coverageAvg_simple$abdncError[sel] ~ coverageAvg_simple$methylCallError[sel], coverageAvg_simple)
+#lines(coverageAvg_simple$methylCallError[sel], predict(loess_fit), col =  colors[i])
 
-  points(coverageAvg_simple$methylCallError[sel],
-         coverageAvg_simple$abdncError[sel],
+  points(coverageAvg_simple$methylCallError[sel[seq(1,length(sel),by=2)]],
+         coverageAvg_simple$abdncError[sel[seq(1,length(sel),by=2)]],
          col = colors[i],
          pch = pchs[i],
-         cex = 0.5,
-         #     type = "b",
-        lty = 3
-         #lwd = 1.0
+         cex = 0.5
+         #   type = "b",
+         # lty = 3,
+         # lwd = 1.0
   )
 }
   dev.off()
   
   
   print("plot abundance Error vs methylCall error vs different thresholds for moderate run of coverage")
-  pdf(paste(dir,"abdVmethylVthrVcoverage_Moderate.pdf",sep=""), width =3, height =2.5, pointsize=8)
+  pdf(paste(dir,"abdVmethylVthrVreadLenght_Moderate.pdf",sep=""), width =3, height =2.5, pointsize=8)
   par(mar= c(5,5,2,2))
   
   # get the range for the x and y axis
@@ -150,7 +148,6 @@ lines(coverageAvg_simple$methylCallError[sel], predict(loess_fit), col =  colors
   # ylab="Abundance Error",
   cex.lab= 1.2,
   #     cex.axis = 0.5
-main="Coverage"
   )
   
   ltys = seq(1:ntrees)
@@ -162,39 +159,27 @@ main="Coverage"
       print(j)
       
   
-  sel <- which(abs(coverageAvg_moderate$var - j) < 0.0001)
+  sel <- which(abs(coverageAvg_moderate$threshold - j) < 0.0001)
   
-  loess_fit <- loess(coverageAvg_moderate$abdncError[sel] ~ coverageAvg_moderate$methylCallError[sel], coverageAvg_moderate)
-    lines(coverageAvg_moderate$methylCallError[sel], predict(loess_fit), col =  colors[i], lty=3)
+  #loess_fit <- loess(coverageAvg_moderate$abdncError[sel] ~ coverageAvg_moderate$methylCallError[sel], coverageAvg_moderate)
+  #lines(coverageAvg_moderate$methylCallError[sel], predict(loess_fit), col =  colors[i])
 
-  points(coverageAvg_moderate$methylCallError[sel],
-         coverageAvg_moderate$abdncError[sel],
+  points(coverageAvg_moderate$methylCallError[sel[seq(1,length(sel),by=2)]],
+         coverageAvg_moderate$abdncError[sel[seq(1,length(sel),by=2)]],
          col = colors[i],
          pch = pchs[i],
          cex = 0.5
-         # type = "b",
-         #   lty = 3,
-         #lwd = 2.0
+         #   type = "b",
+         #lty = 3,
+         #lwd = 1.0
   )
   }
-legend("topright", legend= c(5,10,20),
-#, "Moderate, thr = 0.2","Moderate, thr = 0.4","Moderate, thr = 0.6", "Moderate, thr = 0.8","Hard, thr = 0.2","Hard, thr = 0.4","Hard, thr = 0.6","Hard, thr = 0.8"
-#title = "thresholds",
-pch = rep(pchs,3),
-col = colors[1:ntrees],
-cex = 0.7,
-pt.cex = 0.7,
-lty = 3,
-#lwd= 2.0
-)
-
-
   
   dev.off()
   
   
   print("plot abundance Error vs methylCall error vs different thresholds for hard run of coverage")
-  pdf(paste(dir,"abdVmethylVthrVcoverage_Hard.pdf",sep=""), width =3, height =2.5, pointsize=8)
+  pdf(paste(dir,"abdVmethylVthrVreadLenght_Hard.pdf",sep=""), width =3, height =2.5, pointsize=8)
   par(mar= c(5,5,2,2))
   
   # get the range for the x and y axis
@@ -231,29 +216,22 @@ lty = 3,
       print(j)
       
   
-  sel <- which(abs(coverageAvg_hard$var - j) < 0.0001)
-
-  loess_fit <- loess(coverageAvg_hard$abdncError[sel] ~ coverageAvg_hard$methylCallError[sel], coverageAvg_hard)
-   lines(coverageAvg_hard$methylCallError[sel], predict(loess_fit), col =  colors[i], lty=3)
-
-  xdata <- coverageAvg_hard$methylCallError[sel]
-  ydata <- coverageAvg_hard$abdncError[sel]
-  nls_fit <- nls(ydata ~ a * xdata^2 + b * xdata + c, coverageAvg_simple, start=list(a=-1, b=0, c=1))
-  smoothNLS = smooth.spline(xdata, ydata, spar=0.35)
-  # lines(xdata, predict(nls_fit), col =  colors[i])
-  #lines(smoothNLS, col = colors[i], )
-
-  points(coverageAvg_hard$methylCallError[sel],
-            coverageAvg_hard$abdncError[sel],
+  sel <- which(abs(coverageAvg_hard$threshold - j) < 0.0001)
+  
+  #loess_fit <- loess(coverageAvg_hard$abdncError[sel] ~ coverageAvg_hard$methylCallError[sel], coverageAvg_hard)
+  #lines(coverageAvg_hard$methylCallError[sel], predict(loess_fit), col =  colors[i])
+ 
+  points(coverageAvg_hard$methylCallError[sel[seq(1,length(sel),by=2)]],
+            coverageAvg_hard$abdncError[sel[seq(1,length(sel),by=2)]],
             col = colors[i],
             pch = pchs[i],
             cex = 0.5
-            #     type = "b",
-            #        lty = 3,
-            #    lwd = 1.0
+            #  type = "b",
+            #  lty = 3,
+            #   lwd = 1.0
   )
   }
-legend("topright", legend= c(5,10,20),
+legend("topright", legend= c("thr = 0.4","thr = 0.6","thr = 0.8"),
 #, "Moderate, thr = 0.2","Moderate, thr = 0.4","Moderate, thr = 0.6", "Moderate, thr = 0.8","Hard, thr = 0.2","Hard, thr = 0.4","Hard, thr = 0.6","Hard, thr = 0.8"
 #title = "thresholds",
 pch = rep(pchs,3),
