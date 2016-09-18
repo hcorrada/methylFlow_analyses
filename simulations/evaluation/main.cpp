@@ -105,12 +105,12 @@ void readTruePattern(int start, int end){
 
 		i++;
 		truePatternFile >> chr >> s >> e >> cid >> pid >> abundance >> methylString;
-        cout << "Ture read : "<< chr << " " << s << " " << e <<endl;
+        //cout << "Ture read : "<< chr << " " << s << " " << e <<endl;
 		if( s >= start && e <= end){
             MethylRead* m = new MethylRead(s, e-s+1);
             m->parseMethyl(methylString);
             
-            //m->write();
+           // m->write();
             
             trueMethylData.push_back(m);
             trueAbundanceData.push_back(abundance);
@@ -147,8 +147,8 @@ void readEstimatedPattern(int start, int end){
        // if(i==1)
         maxAbd = std::max(double(maxAbd), double(abundance));
         
-        //cout << "start = " << start << " s= " << s  << " abundance= " << abundance << " methylstring = " << methylString << endl;
-        //cout << "Estimated read : "<< chr << " " << s << " " << e << "  " << methylString << endl;
+       // cout << "start = " << start << " s= " << s << "end = " << end  << " abundance= " << abundance << " methylstring = " << methylString << endl;
+       // cout << "Estimated read : "<< chr << " " << s << " " << e << "  " << methylString << endl;
 		if( s >= start -1  &&  e <= end && abundance > 0.01*maxAbd && methylString!="*"){
             
             MethylRead* m = new MethylRead(s, e-s+1);
@@ -184,7 +184,7 @@ void readShortRead(int start, int end){
 	while(!shortReadFile.eof()) {
 		i++;
 		shortReadFile >> readId >> s >> l >> strand >> methylString >> etc;
-        //cout << "Ture read : "<< chr << " " << s << " " << e <<endl;
+        //cout << "Ture read : "<< chr << " " << s << " " << methylString <<endl;
 		if( s >= start - 1 && s + l -1  <= end){
             MethylRead* m = new MethylRead(s, s + l -1);
             m->parseMethyl(methylString);
@@ -231,14 +231,14 @@ float cost(Graph::Node u, Graph::Node v) {
 void buildGraph() {
     
     //cout << "trueMethylSize = " << trueMethylData.size() << endl;
-    //cout << "estimatedMethylSize = " << estimatedMethylData.size() << endl;
+    cout << "estimatedMethylSize = " << estimatedMethylData.size() << endl;
     for (int i=0; i < trueMethylData.size(); i++) {
        // cout << "Add true node " << i << endl;
         addNode_Read(trueMethylData.at(i), trueAbundanceData.at(i));
     }
     
     for (int i=0; i < estimatedMethylData.size(); i++) {
-       // cout << "Add estimated node " << i << endl;
+       //cout << "Add estimated node " << i << endl;
         addNode_Read(estimatedMethylData.at(i), estimatedAbundanceData.at(i));
     }
     
@@ -312,14 +312,14 @@ void writeMatchMatrix() {
                 }
             }
             
-            matchFile << var << "\t" << g.id(u) << "\t" << argmin  << "\t" << min << endl;
-            matchAppFile << var << "\t" << g.id(u) << "\t" << argmin  << "\t" << min << endl;
+        //  matchFile << var << "\t" << g.id(u) << "\t" << argmin  << "\t" << min << endl;
+        //  matchAppFile << var << "\t" << g.id(u) << "\t" << argmin  << "\t" << min << endl;
 
         }
     }
-    matchFile.close();
     weightFile.close();
-    matchAppFile.close();
+   // matchFile.close();
+   // matchAppFile.close();
     
 }
 
@@ -399,9 +399,14 @@ void computeErrorMatrix(double threshold) {
     
     for (int i = 0 ; i < truePatternNum ; i ++){
         if(weight_map[i] < threshold) {
-            abndncError += pow(double(abdnc_map[i])- abdnc_map[matchTrue_map[i]]*abdnc_map[i]/match_abdnc_map[matchTrue_map[i]],2)/1.0;
+           // abndncError += pow(double(abdnc_map[i])- abdnc_map[matchTrue_map[i]]*abdnc_map[i]/match_abdnc_map[matchTrue_map[i]],2)/1.0;
+            abndncError += pow((double(abdnc_map[i])- abdnc_map[matchTrue_map[i]]*abdnc_map[i]/match_abdnc_map[matchTrue_map[i]])/double(abdnc_map[i]),2)/1.0;
+           // abndncError += abs((double(abdnc_map[i])- abdnc_map[matchTrue_map[i]]*abdnc_map[i]/match_abdnc_map[matchTrue_map[i]]))/double(abdnc_map[i])/1.0;
+            
         } else
-            abndncError += pow(double(abdnc_map[i]),2)/1.0;
+          //  abndncError += pow(double(abdnc_map[i]),2)/1.0;
+        abndncError += 1.0;
+        
             
     }
     
@@ -438,20 +443,24 @@ void computeErrorMatrix(double threshold) {
     //cout << "FP = " << FP << endl;
     //cout << "estimatedPatternNum = " << estimatedPatternNum << endl;
     //cout << "truePatternNum = " << truePatternNum << endl;
-
-    methylCallError = methylCallError/match;
-//    abndncError = sqrt(abndncError/TP);
-    abndncError = sqrt(abndncError/truePatternNum);
-    if( !(TP == 0) ){
-        evalFile << threshold << "\t" << abndncError << "\t" << methylCallError << "\t" << TP << "\t" << FN  << "\t"  << FP << std::endl;
-        thr.push_back(threshold);
-        abdncErr_avg_map[threshold].push_back(abndncError);
-        methylErr_avg_map[threshold].push_back(methylCallError);
-        TP_avg_map[threshold].push_back(TP);
-        FN_avg_map[threshold].push_back(FN);
-        FP_avg_map[threshold].push_back(FP);
+    if (match != 0){
+        methylCallError = methylCallError/match;
+    } else {
+        methylCallError = 0;
     }
-    else{
+    abndncError = sqrt(abndncError/truePatternNum);
+ //   abndncError = abndncError/truePatternNum;
+
+    //if( !(TP == 0) ){
+    evalFile << threshold << "\t" << abndncError << "\t" << methylCallError << "\t" << TP << "\t" << FN  << "\t"  << FP << std::endl;
+    thr.push_back(threshold);
+    abdncErr_avg_map[threshold].push_back(abndncError);
+    methylErr_avg_map[threshold].push_back(methylCallError);
+    TP_avg_map[threshold].push_back(TP);
+    FN_avg_map[threshold].push_back(FN);
+    FP_avg_map[threshold].push_back(FP);
+   // }
+   /* else{
         evalFile << threshold << "\t" << 0 << "\t" << 0 << "\t" << TP << "\t" << FN  << "\t"  << FP << std::endl;
         thr.push_back(threshold);
         abdncErr_avg_map[threshold].push_back(0);
@@ -459,7 +468,7 @@ void computeErrorMatrix(double threshold) {
         TP_avg_map[threshold].push_back(TP);
         FN_avg_map[threshold].push_back(FN);
         FP_avg_map[threshold].push_back(FP);
-    }
+    }*/
     
     //evalFile.open("/cbcb/project-scratch/fdorri/Code/methylFlow/testing/eval.txt", std::ios_base::app);
     
@@ -539,9 +548,35 @@ float computeMinCostFlowError(){
         //cerr << "primal " << g.id(g.source(e)) << "\t " << g.id(g.target(e)) << "\t" << val << endl;
     }
     
+    
+   for (NodeIt u(g); u != INVALID; ++u) {
+        //cerr <<  g.id(u) << "\t" << abundance_map[u] << endl;
+        lemon::Lp::Expr c;
+        if (g.id(u) < trueMethylData.size()) {
+            float matchFlow = -1;
+            float matchCost = 1.0;
+            Node  matchV;
+            for (lemon::ListDigraph::OutArcIt arcIt(g, u); arcIt != INVALID; ++arcIt) {
+                
+                Edge arc(arcIt);
+                float val = lp.primal(f[arc]);
+                if (val > matchFlow) {
+                    matchFlow = val;
+                    matchV = g.target(arc);
+                    matchCost = cost(u, matchV);
+                }
+            }
+            matchFile << var << "\t" << g.id(u) << "\t" << g.id(matchV)  << "\t" << matchCost << endl;
+            matchAppFile << var << "\t" << g.id(u) << "\t" << g.id(matchV)  << "\t" << matchCost << endl;
+            
+        }
+    }
+    
     return v;
     
     
+    matchFile.close();
+    matchAppFile.close();
     
 }
 
@@ -745,19 +780,22 @@ int main (int argc, char* argv[]) {
     /// then each line is estimated pattern id , abundance of pattern
     // then the weight information of edges and matching information is seen in the rest of file
     
-    minCostFlowErr =  computeMinCostFlowError();
-    MCFFile << var << "\t" << minCostFlowErr << endl;
-    cout << "min cost flow error " << minCostFlowErr << endl;
+    //minCostFlowErr =  computeMinCostFlowError();
+    //MCFFile << var << "\t" << minCostFlowErr << endl;
+    //cout << "min cost flow error " << minCostFlowErr << endl;
     
     
     writeMatchMatrix();
     
+    minCostFlowErr =  computeMinCostFlowError();
+    MCFFile << var << "\t" << minCostFlowErr << endl;
+    cout << "min cost flow error " << minCostFlowErr << endl;
     
     readMatchMatrix();
     
     
     //// computing Error Metric ////////
-    for (double thresh=0.1; thresh<0.4; thresh +=0.05)
+    for (double thresh=0.1; thresh<1; thresh +=0.1)
         computeErrorMatrix(thresh);
     
     

@@ -217,7 +217,7 @@ void readSamInput(int start, int end){
         // construct object with read info
         m = new MethylRead(rPos, rLen);
         if (methStr != "*"){
-            m->parseXMtag(XM);
+            m->parseXMtag(XM, CIGAR);
             samMethylData.push_back(m);
             samAbundanceData.push_back(1);
             samChrData.push_back(chr);
