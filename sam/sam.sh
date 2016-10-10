@@ -1,6 +1,6 @@
 #!/bin/bash
 
-### run :  sh sam.sh par1 par2 par3 par4 par5
+### run :  sh sam.sh par1 par2 par3 par4 par5 par6 par7 par8
 ## Example: sh sam.sh 0 /Users/faezeh/Projects/methylFlow/data/WGS/SRR1020509.sorted.sam SRR1020509 1 3 3100000 15000000
 
 ## Example: sh sam.sh 0 /Users/faezeh/Projects/methylFlow/data/singleCell/wgbs/lane7_RSC9N_BS_merged_L007_R1_val_1.fq.gz_unmapped_reads_1.fq.gz_bismark_bt2.deduplicated.bam.sorted.bam.3.3000000.10000000.sam wgbs-bulk 1 3 3020500 3020937
@@ -25,6 +25,7 @@
 ### par5 = chr
 ### par6 = start
 ### par7 = end
+### par8 = verboseTime (writing extra info about elapsed times in output)
 
 
 ## input file is Sam or
@@ -42,6 +43,8 @@ echo $3
 echo $4
 echo $5
 echo $6
+echo $7
+echo $8
 
 
 pwd=$(pwd)
@@ -79,10 +82,16 @@ echo -n "" > methylPercentageEstimated.txt
 
 if [ "$4" == 1 ]
 then
-echo "SAM input MethylFlow"
-echo 
-#samtools view -Shu $2 | samtools sort - -o test.sorted | samtools view - -h -o test.sorted.sam
-${mf} -i $2 -o ${dir} -sam -s 1 -chr $5 -start $6 -end $7
+    echo "SAM input MethylFlow"
+    if [ "$8" == 1 ]
+    then
+        #samtools view -Shu $2 | samtools sort - -o test.sorted | samtools view - -h -o test.sorted.sam
+        ${mf} -i $2 -o ${dir} -sam --verboseTime -s 1 -chr $5 -start $6 -end $7
+
+    else
+        ${mf} -i $2 -o ${dir} -sam -s 1 -chr $5 -start $6 -end $7
+
+    fi
 echo "start= $6"
 
 echo "end= $7"
@@ -90,9 +99,16 @@ echo "end= $7"
 
 elif [ "$4" == 0 ]
 then
-${mf} -i $2 -o ${dir} -s 1 -chr $5 -start $6 -end $7
-else
+    if [ "$8" == 1 ]
+    then
+        #samtools view -Shu $2 | samtools sort - -o test.sorted | samtools view - -h -o test.sorted.sam
+        ${mf} -i $2 -o ${dir} --verboseTime -s 1 -chr $5 -start $6 -end $7
 
+    else
+        ${mf} -i $2 -o ${dir} -s 1 -chr $5 -start $6 -end $7
+    fi
+
+else
 echo " your input should be 0, 1 "
 
 fi
@@ -127,11 +143,22 @@ if [ "$4" == 1 ]
 then
 echo "SAM input MethylFlow"
 #samtools view -Shu $2 | samtools sort - -o test.sorted | samtools view - -h -o test.sorted.sam
-${mf} -i $2 -o ${dir} -sam -s 1 -chr $5 -start $6 -end $7
+    if [ "$8" == 1 ]
+    then
+        ${mf} -i $2 -o ${dir} -sam --verbose -s 1 -chr $5 -start $6 -end $7
+    else
+        ${mf} -i $2 -o ${dir} -sam -s 1 -chr $5 -start $6 -end $7
+    fi
 
-elif ["$3" == 0 ]
+
+elif ["$4" == 0 ]
 then
-${mf} -i $2 -o ${dir}  -s 1 -chr $5 -start $6 -end $7
+    if [ "$8" == 1 ]
+    then
+        ${mf} -i $2 -o ${dir}  --verbose -s 1 -chr $5 -start $6 -end $7
+    else
+        ${mf} -i $2 -o ${dir} -s 1 -chr $5 -start $6 -end $7
+    fi
 
 else
 
